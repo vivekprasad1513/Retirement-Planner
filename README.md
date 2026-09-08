@@ -1,12 +1,4 @@
 # WealthHorizon PRO
-
-[![HTML5](https://img.shields.io/badge/HTML5-Single_File-E=html5&logoColor=white](https://developer.mozilla.org/docs/Web/HTML)
-[![JavaScript](httpsio/badge/JavaScript-Vanilla-F7DF1E?logo=javascript&logoColor=black](https://developer.mozilla.org/docs/Web/JavaScript)
-https://img.shields.io/badge/Mode-Fully_Offline-22c55e](#privacy)
-[![No Dependencies](httpsdge/Dependencies-None-7c5cff](#technology)
-[![India](https://img.shields.io/badge/Designed_for-India-ff993ew)
-[![Educational Use](https://img.shields.iotional-blue](#disclaimer)
-
 A privacy-first, fully offline retirement and pension what-if planner for India.
 
 WealthHorizon PRO helps users explore retirement corpus requirements, pension sustainability, investment scenarios, portfolio allocation, healthcare costs, spouse protection, and the impact of inflation.
