@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>WealthHorizon — Retirement &amp; Pension What-If Planner</title>
+<style>
+:root{
+  --bg0:#0a0713; --bg1:#120a24; --panel:#160e2b; --card:#1a1030; --card2:#221541;
+  --ink:#f4f1ff; --muted:#a9a5cf; --line:#2e2350;
+  --violet:#7c5cff; --violet2:#a78bfa; --cyan:#22d3ee; --gold:#ffcf5c; --pink:#ff6ec7;
+  --green:#22c55e; --yellow:#eab308; --orange:#ff9f45; --red:#ef4444;
+  --r:16px;
+  --shadow:0 2px 4px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.45), 0 20px 48px rgba(124,92,255,.10);
+  --shadow-lift:0 6px 12px rgba(0,0,0,.45), 0 18px 40px rgba(0,0,0,.55), 0 32px 70px rgba(124,92,255,.20);
+  --grad-hot:linear-gradient(135deg,#ff6ec7 0%,#7c5cff 45%,#22d3ee 100%);
+  --grad-gold:linear-gradient(135deg,#ffcf5c,#ff9f45);
+  --grad-violet:linear-gradient(180deg,#8b6bff,#6a45e0);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+/* prevent selection globally; inputs re-enable below */
+body{
+  -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;
+  background:
+    radial-gradient(1200px 640px at 12% -8%, rgba(124,92,255,.22), transparent 60%),
+    radial-gradient(1000px 560px at 100% -6%, rgba(34,211,238,.16), transparent 55%),
+    radial-gradient(900px 520px at 60% 110%, rgba(255,110,199,.14), transparent 60%),
+    linear-gradient(180deg,var(--bg0),var(--bg1) 45%);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  font-size:14px; line-height:1.5;
+}
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
+h1,h2,h3,h4{margin:0 0 .4em;font-weight:800;letter-spacing:.2px}
+h2{font-size:19px;color:#efeaff}
+h3{font-size:14.5px;color:#dcd4ff}
+a{color:var(--violet2)}
+small{color:var(--muted)}
+
+/* ---------- Marketing hero header ---------- */
+header.top{
+  position:sticky;top:0;z-index:60;
+  background:linear-gradient(180deg,rgba(18,10,36,.96),rgba(10,7,19,.86));
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding:12px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:44px;height:44px;border-radius:13px;background:var(--grad-hot);
+  display:flex;align-items:center;justify-content:center;font-weight:900;color:#0a0713;font-size:20px;
+  box-shadow:0 6px 18px rgba(124,92,255,.6), inset 0 1px 2px rgba(255,255,255,.5)}
+.brand h1{font-size:18px;margin:0;background:var(--grad-hot);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+.brand small{display:block;color:var(--muted)}
+.pill-pro{font-size:10px;font-weight:800;letter-spacing:.6px;padding:3px 8px;border-radius:20px;background:var(--grad-gold);color:#3a2600;margin-left:8px;vertical-align:middle}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{
+  background:linear-gradient(180deg,#2a1c4d,#1d1338);color:var(--ink);border:1px solid var(--line);
+  padding:9px 13px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:700;
+  transition:.16s;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.06);
+}
+button:hover,.btn:hover{border-color:var(--violet);transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.5)}
+button:active{transform:translateY(0)}
+button.primary{background:var(--grad-violet);border-color:transparent;color:#fff;box-shadow:0 6px 16px rgba(124,92,255,.5)}
+button.gold{background:var(--grad-gold);border-color:transparent;color:#3a2600}
+button.ghost{background:transparent}
+button.danger{border-color:#7f2540;color:#ffb4cf}
+
+/* hero banner strip */
+.hero{max-width:1600px;margin:16px auto 0;padding:0 16px}
+.hero-inner{position:relative;overflow:hidden;border-radius:20px;border:1px solid var(--line);
+  background:linear-gradient(120deg,rgba(124,92,255,.18),rgba(34,211,238,.10) 55%,rgba(255,110,199,.16));
+  box-shadow:var(--shadow);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hero-inner::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 200px at 90% -30%,rgba(255,207,92,.25),transparent 60%);pointer-events:none}
+.hero h2{font-size:23px;margin:0 0 4px;color:#fff}
+.hero p{margin:0;color:#d8d2f5;font-size:13.5px;max-width:640px}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap}
+
+.wrap{display:flex;gap:18px;max-width:1600px;margin:16px auto 0;padding:0 16px 24px;perspective:1700px;perspective-origin:50% 0}
+.sidebar{flex:0 0 366px;max-width:366px;background:linear-gradient(180deg,#180f2e,#140c26);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);position:sticky;top:86px;max-height:calc(100vh - 104px);overflow-y:auto}
+.main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:18px;transform-style:preserve-3d}
+.group{border:1px solid var(--line);border-radius:13px;margin-bottom:10px;overflow:hidden;background:linear-gradient(180deg,#1c1236,#170e2c);box-shadow:0 2px 7px rgba(0,0,0,.3)}
+.group>summary{list-style:none;cursor:pointer;padding:11px 13px;font-weight:800;color:#e4ddff;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.group>summary::-webkit-details-marker{display:none}
+.group>summary .chev{transition:.2s;color:var(--muted)}
+.group[open]>summary .chev{transform:rotate(90deg)}
+.group .body{padding:6px 13px 13px}
+.field{margin:8px 0;position:relative}
+.field label{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:3px;gap:6px}
+.field .help{cursor:pointer;color:#d9ccff;font-size:11px;background:rgba(124,92,255,.28);border:1px solid rgba(124,92,255,.6);border-radius:50%;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-weight:800}
+.field .help:hover{background:var(--violet);color:#fff}
+.field input[type=number],.field input[type=text],.field select{width:100%;background:#0f0922;border:1px solid var(--line);color:var(--ink);padding:8px 10px;border-radius:10px;font-size:13.5px;font-family:inherit}
+.field input:focus,.field select:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 2px rgba(124,92,255,.28)}
+.field.invalid input{border-color:var(--red);box-shadow:0 0 0 2px rgba(239,68,68,.3)}
+.rangewrap{display:flex;align-items:center;gap:8px}
+.rangewrap input[type=range]{flex:1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);cursor:pointer}
+.chk input{width:16px;height:16px;accent-color:var(--violet)}
+input[type=range]{-webkit-appearance:none;height:5px;border-radius:5px;background:#2e2350}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--violet);cursor:pointer;box-shadow:0 0 0 3px rgba(124,92,255,.3),0 2px 4px rgba(0,0,0,.5)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:var(--violet);cursor:pointer}
+.section{background-color:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);transition:transform .25s, box-shadow .25s;position:relative}
+.section::before{content:"";position:absolute;inset:0;border-radius:var(--r);pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 26%)}
+.section:hover{box-shadow:var(--shadow-lift)}
+.section>.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.kpigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:12px}
+.kpi{background:linear-gradient(160deg,#251646,#190f30);border:1px solid var(--line);border-radius:13px;padding:12px 14px;position:relative;overflow:hidden;box-shadow:0 3px 9px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);transition:transform .2s, box-shadow .2s}
+.kpi:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 26px rgba(0,0,0,.5)}
+.kpi .k-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:5px}
+.kpi .k-val{font-size:21px;font-weight:900;margin-top:6px;font-variant-numeric:tabular-nums;color:#fbf9ff}
+.kpi .k-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.kpi.good{border-left:4px solid var(--green)} .kpi.warn{border-left:4px solid var(--yellow)} .kpi.bad{border-left:4px solid var(--red)} .kpi.accent{border-left:4px solid var(--violet)}
+.status{padding:14px 16px;border-radius:13px;font-weight:800;display:flex;align-items:center;gap:12px;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.status .dot{width:14px;height:14px;border-radius:50%;box-shadow:0 0 14px currentColor}
+.status.s-green{background:rgba(34,197,94,.13);border:1px solid rgba(34,197,94,.45);color:#8ff0b4}
+.status.s-yellow{background:rgba(234,179,8,.13);border:1px solid rgba(234,179,8,.45);color:#ffe08a}
+.status.s-orange{background:rgba(255,159,69,.13);border:1px solid rgba(255,159,69,.45);color:#ffc79a}
+.status.s-red{background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.45);color:#ffb3bd}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:11px;box-shadow:inset 0 2px 8px rgba(0,0,0,.3)}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+th{background:#140c28;color:#cdbfff;position:sticky;top:0;font-weight:800}
+td:first-child,th:first-child{text-align:left}
+tbody tr:hover{background:rgba(124,92,255,.09)}
+.cell-g{background:rgba(34,197,94,.22)} .cell-y{background:rgba(234,179,8,.22)} .cell-o{background:rgba(255,159,69,.24)} .cell-r{background:rgba(239,68,68,.26)}
+.chartcard{background:linear-gradient(180deg,#150c2a,#100823);border:1px solid var(--line);border-radius:13px;padding:10px 12px 8px;box-shadow:0 4px 14px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04)}
+.chartcard .ch-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.chartcard .ch-head h3{margin:0;font-size:13px}
+.chartcard .ch-head select{background:#0f0922;border:1px solid var(--line);color:var(--muted);font-size:11px;padding:3px 6px;border-radius:8px;cursor:pointer}
+.chartbox{position:relative}
+.chartbox canvas{width:100%;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;font-size:11px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.thermo{height:24px;border-radius:14px;background:#0f0922;border:1px solid var(--line);overflow:hidden;position:relative;box-shadow:inset 0 2px 6px rgba(0,0,0,.5)}
+.thermo>div{height:100%;transition:width .6s;border-radius:14px;box-shadow:0 0 14px rgba(124,92,255,.6)}
+.thermo .lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.8)}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800}
+.tag.g{background:rgba(34,197,94,.2);color:#8ff0b4} .tag.y{background:rgba(234,179,8,.2);color:#ffe08a} .tag.o{background:rgba(255,159,69,.22);color:#ffc79a} .tag.r{background:rgba(239,68,68,.22);color:#ffb3bd}
+.rec{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:11px;margin:8px 0;background:linear-gradient(180deg,#20153e,#1a1030);box-shadow:0 2px 7px rgba(0,0,0,.3)}
+.rec .ic{font-size:18px;flex:0 0 auto}
+.rec.crit{border-color:rgba(239,68,68,.5)} .rec.ok{border-color:rgba(34,197,94,.45)}
+.scn-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.scn-controls button{font-size:12px;padding:7px 11px}
+.diag-summary{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.diag-pill{padding:10px 16px;border-radius:11px;font-weight:800;font-size:15px;box-shadow:0 3px 9px rgba(0,0,0,.35)}
+.diag-pill.p{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.45);color:#8ff0b4}
+.diag-pill.f{background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.45);color:#ffb3bd}
+.diag-pill.w{background:rgba(234,179,8,.16);border:1px solid rgba(234,179,8,.45);color:#ffe08a}
+.diag-pill.t{background:var(--card2);border:1px solid var(--line)}
+.warnbox{background:rgba(234,179,8,.09);border:1px solid rgba(234,179,8,.4);border-radius:11px;padding:10px 14px;color:#ffe6a6;font-size:12.5px}
+.disclaim{font-size:11.5px;color:var(--muted);line-height:1.6}
+.nowarn{color:#8ff0b4}
+#tooltip{position:fixed;pointer-events:none;background:linear-gradient(180deg,#140b2b,#0a0713);border:1px solid var(--violet);color:#f2eeff;padding:9px 12px;border-radius:11px;font-size:13px;line-height:1.45;z-index:99999;opacity:0;transition:opacity .12s;max-width:300px;box-shadow:0 12px 34px rgba(0,0,0,.7);font-weight:500}
+#tooltip.show{opacity:1}
+#tooltip b{color:var(--violet2)}
+.tabbar{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:14px}
+.tabbar button{border:none;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:8px 12px;color:var(--muted);box-shadow:none}
+.tabbar button:hover{transform:none;box-shadow:none}
+.tabbar button.on{color:#fff;border-bottom-color:var(--violet)}
+.tabpane{display:none} .tabpane.on{display:block}
+.muted{color:var(--muted)} .mono{font-variant-numeric:tabular-nums}
+hr.sep{border:none;border-top:1px solid var(--line);margin:14px 0}
+.badge-assume{font-size:10px;background:rgba(124,92,255,.18);color:#cbb8ff;padding:2px 6px;border-radius:6px;margin-left:6px}
+
+/* ---------- Disclaimer modal ---------- */
+#discModal{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(900px 500px at 50% 0%,rgba(124,92,255,.25),transparent 60%),rgba(6,4,12,.92);backdrop-filter:blur(8px)}
+#discModal.on{display:flex}
+.disc-card{max-width:640px;width:100%;background:linear-gradient(180deg,#1a1030,#130b26);border:1px solid var(--line);border-radius:20px;
+  padding:26px 28px;box-shadow:0 30px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(124,92,255,.2);animation:pop .35s ease}
+@keyframes pop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.disc-card h2{font-size:22px;background:var(--grad-hot);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.disc-scroll{max-height:38vh;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;background:#0f0922;font-size:12.8px;color:#d6cff0;line-height:1.7}
+.disc-scroll b{color:#efeaff}
+.disc-check{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:#e7e1ff;margin:8px 0 14px;cursor:pointer}
+.disc-check input{width:18px;height:18px;margin-top:1px;accent-color:var(--violet)}
+.disc-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+#discNeedCheck{display:none;color:#ffb3bd;font-size:12px;margin-bottom:8px}
+
+/* ---------- Screenshot / focus shield ---------- */
+#shield{position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;text-align:center;
+  background:repeating-linear-gradient(45deg,#0a0713,#0a0713 22px,#120a24 22px,#120a24 44px);backdrop-filter:blur(14px)}
+#shield.on{display:flex}
+#shield .sh-in{max-width:420px;padding:24px}
+#shield .sh-logo{width:60px;height:60px;border-radius:16px;background:var(--grad-hot);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#0a0713;font-size:26px}
+#shield h3{font-size:18px;color:#fff}
+#shield p{color:#cfc6ee;font-size:13px}
+body.devtools-warn .main,body.devtools-warn .sidebar,body.devtools-warn .hero{filter:blur(9px) saturate(.6);pointer-events:none;transition:filter .2s}
+body.devtools-warn::after{content:"Developer tools appear to be open. Close them to continue using this protected document.";position:fixed;z-index:99997;left:50%;top:20px;transform:translateX(-50%);background:#1a1030;border:1px solid var(--red);color:#ffb3bd;padding:12px 18px;border-radius:12px;font-weight:700;max-width:90%;box-shadow:0 12px 30px rgba(0,0,0,.6)}
+
+@media(max-width:1100px){
+  .grid2{grid-template-columns:1fr}
+  .wrap{flex-direction:column;perspective:none}
+  .sidebar{position:relative;top:0;max-width:100%;flex-basis:auto;max-height:none}
+}
+@media(max-width:560px){
+  .two,.three{grid-template-columns:1fr}
+  .kpigrid{grid-template-columns:1fr 1fr}
+  .kpi .k-val{font-size:17px}
+  .chgrid{grid-template-columns:1fr}
+  .hero-inner{padding:16px}
+}
+/* Printing disabled visually (also blocked via Ctrl+P) */
+@media print{ html{display:none !important} }
+</style>
+<style id="compactStableCharts">
+:root{--chart-height:92px;--donut-height:116px}
+.hero{margin-top:8px}.hero-inner{padding:10px 16px;border-radius:14px}.hero h2{font-size:18px}.hero p{font-size:12px;line-height:1.3;max-width:760px}
+.wrap{gap:10px;margin-top:8px;padding:0 10px 12px}.main{gap:9px}.section{padding:9px 10px}.section>.sec-head{margin-bottom:6px}
+.kpigrid{grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:6px}.kpi{padding:7px 9px;border-radius:10px}.kpi .k-label{font-size:9.5px}.kpi .k-val{font-size:16px;margin-top:2px}.kpi .k-sub{font-size:9.5px}
+.chgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;align-items:start}.grid2{gap:8px}.chartcard{padding:6px 7px 5px;border-radius:10px;overflow:hidden;contain:layout paint;position:relative}.chartcard .ch-head{margin-bottom:1px}.chartcard .ch-head h3{font-size:11px;line-height:1.2}.chartcard .ch-head select{font-size:10px;padding:2px 5px}
+.chartbox{position:relative;height:var(--chart-height);min-height:var(--chart-height);max-height:var(--chart-height);overflow:hidden}.chartbox canvas{display:block;width:100%;height:auto;max-height:var(--chart-height);opacity:1!important;visibility:visible!important}
+#chartDonut{max-height:var(--donut-height)}.legend{margin-top:2px;gap:5px;font-size:8.8px;line-height:1.15;max-height:22px;overflow:hidden}.legend i{width:7px;height:7px}.thermo{height:17px}.thermo .lbl{font-size:10px}.tablewrap{max-height:220px}.tabbar{margin-bottom:7px}.tabbar button{padding:5px 7px;font-size:11px}.scn-controls{margin-bottom:7px;gap:5px}.scn-controls button{font-size:10.5px;padding:5px 8px}hr.sep{margin:7px 0}h3{font-size:13px}
+/* The chart stays fully visible. Only compositor-friendly glow/opacity accents animate. */
+.chartcard.visual-pulse{animation:cardPulse 5s cubic-bezier(.16,1,.3,1) both}
+.chartcard.visual-pulse canvas{animation:canvasSettle 5s cubic-bezier(.16,1,.3,1) both;transform:translateZ(0);backface-visibility:hidden}
+.chartcard.visual-pulse::after{content:"";position:absolute;left:7px;right:7px;bottom:3px;height:1px;background:linear-gradient(90deg,#7c5cff,#22d3ee);transform-origin:left;animation:progressPulse 5s linear both;opacity:.55}
+@keyframes canvasSettle{0%{opacity:.82;filter:saturate(.88)}10%{opacity:1;filter:saturate(1)}100%{opacity:1;filter:none}}
+@keyframes cardPulse{0%{box-shadow:0 0 0 rgba(124,92,255,0)}12%{box-shadow:0 5px 16px rgba(124,92,255,.20)}100%{box-shadow:0 4px 14px rgba(0,0,0,.35)}}
+@keyframes progressPulse{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.chartcard.visual-pulse,.chartcard.visual-pulse canvas,.chartcard.visual-pulse::after{animation:none!important;opacity:1!important;filter:none!important;transform:none!important}*{scroll-behavior:auto!important}}
+@media(max-width:1399px){.chgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1099px){.chgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar{flex-basis:320px;max-width:320px}}
+@media(max-width:700px){:root{--chart-height:84px;--donut-height:104px}.hero{display:none}.chgrid,.grid2{grid-template-columns:1fr}.kpigrid{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:0 7px 10px}.section{padding:8px}.sidebar{padding:9px}}
+</style>
+
+<style id="FINAL_LAYOUT_FIX">
+/* remove vacant top space */
+.hero{display:none !important}
+header.top{padding:8px 16px !important}
+.wrap{margin-top:8px !important;padding-top:0 !important;gap:12px !important}
+.main{gap:10px !important}
+.section{padding:10px 12px !important}
+.section>.sec-head{margin-bottom:6px !important}
+.kpigrid{gap:7px !important}.kpi{padding:8px 10px !important}.kpi .k-val{font-size:17px !important}
+
+/* tabs: WRAP to next line, NO horizontal scrollbar */
+#tabbar{flex-wrap:wrap !important;overflow-x:visible !important;overflow-y:visible !important;white-space:normal !important}
+#tabbar button{flex:0 0 auto !important;white-space:nowrap !important}
+.tabpane{display:none !important}.tabpane.on{display:block !important;visibility:visible !important;opacity:1 !important;min-height:120px}
+
+/* charts: 2 per row, taller so axis labels are fully visible */
+.chgrid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:12px !important;align-items:start}
+.grid2{gap:12px !important}
+.chartcard{position:relative !important;overflow:visible !important;padding:9px 10px 8px !important}
+.chartcard .ch-head{margin-bottom:4px !important}
+.chartcard .ch-head h3{font-size:13px !important}
+.chartcard .ch-head select{font-size:11px !important;padding:4px 8px !important}
+.chartbox{position:relative !important;height:172px !important;min-height:172px !important;max-height:172px !important;overflow:hidden !important;background:#100823 !important;border-radius:8px}
+.chartbox canvas{display:block !important;width:100% !important;height:100% !important;max-height:none !important;opacity:1 !important;visibility:visible !important;background:transparent !important}
+.chartcard:has(#chartSpouse) .chartbox,.chartcard:has(#chartHealth) .chartbox,.chartcard:has(#chartDonut) .chartbox{height:190px !important;min-height:190px !important;max-height:190px !important}
+.chartcard:has(#chartDonut) .chartbox{display:block !important}
+
+/* legends always visible, can wrap */
+.legend{display:flex !important;flex-wrap:wrap !important;visibility:visible !important;opacity:1 !important;max-height:none !important;overflow:visible !important;min-height:14px !important;margin-top:6px !important;gap:8px !important;font-size:10px !important;line-height:1.3 !important}
+.legend span{display:inline-flex !important;align-items:center;gap:5px}
+.legend i{width:9px !important;height:9px !important}
+
+@media(max-width:980px){.chgrid,.grid2{grid-template-columns:1fr !important}}
+
+/* ===== PRINT: 1-page A4 report of selected inputs ===== */
+#printReport{display:none}
+@media print{
+  @page{size:A4 portrait;margin:11mm}
+  html{display:block !important}
+  body{background:#fff !important;color:#000 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body *{visibility:hidden !important}
+  #printReport,#printReport *{visibility:visible !important}
+  #printReport{display:block !important;position:absolute;left:0;top:0;width:100%;color:#000;background:#fff;font-family:'Segoe UI',Arial,sans-serif}
+  .pr-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #4a2fb0;padding-bottom:5px;margin-bottom:7px}
+  .pr-title{font-size:15px;font-weight:800;color:#3a1f9e}
+  .pr-meta{font-size:9px;color:#444}
+  .pr-status{font-size:10.5px;font-weight:700;margin:0 0 7px;color:#111}
+  .pr-sec{font-size:11px;font-weight:800;color:#3a1f9e;margin:7px 0 4px;border-bottom:1px solid #ccc;padding-bottom:2px}
+  .pr-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 12px;margin-bottom:3px}
+  .pr-kpi{display:flex;justify-content:space-between;font-size:9.2px;border-bottom:1px dotted #ddd;padding:1px 0}
+  .pr-kpi .l{color:#333}.pr-kpi .v{font-weight:700;color:#000}
+  .pr-groups{column-count:2;column-gap:14px}
+  .pr-group{break-inside:avoid;margin-bottom:6px}
+  .pr-gtitle{font-size:10px;font-weight:800;color:#222;margin-bottom:2px}
+  .pr-tbl{width:100%;border-collapse:collapse}
+  .pr-tbl td{font-size:8.8px;padding:1.4px 3px;border-bottom:1px solid #eee;vertical-align:top}
+  .pr-tbl td.k{color:#444;width:64%}.pr-tbl td.v{color:#000;font-weight:700;text-align:right}
+  .pr-foot{margin-top:8px;font-size:8px;color:#555;border-top:1px solid #ccc;padding-top:4px}
+}
+</style>
+</head>
+<body>
+<div id="tooltip"></div>
+
+<!-- Screenshot / focus shield -->
+<div id="shield"><div class="sh-in"><div class="sh-logo">₹</div><h3>Content protected</h3><p id="shieldMsg">Content hidden while the window is not focused.</p></div></div>
+
+<!-- Disclaimer gate -->
+<div id="discModal">
+  <div class="disc-card">
+    <h2>Before you begin — please read</h2>
+    <p class="muted" style="font-size:12.8px;margin:0">This tool is licensed software. Access requires acceptance of the terms below.</p>
+    <div class="disc-scroll">
+      <p><b>Educational simulation only.</b> WealthHorizon is an educational retirement &amp; pension planning <b>simulator</b>. It does <b>not</b> constitute investment, tax, legal, or financial advice, nor a recommendation to buy or sell any security, fund, insurance, annuity, or product.</p>
+      <p><b>No guarantee of outcomes.</b> All figures are hypothetical projections based on assumptions <b>you</b> enter. Historical or assumed returns do not guarantee future results. Markets, interest rates, PPF/annuity rates, inflation, and tax laws change and may differ materially from these assumptions.</p>
+      <p><b>Not a substitute for a professional.</b> Before acting on any figure, consult a SEBI-registered investment adviser, a qualified tax professional, and/or a licensed insurance advisor regarding your specific circumstances.</p>
+      <p><b>Illustrative tax &amp; annuity modelling.</b> Tax, SWP, and annuity calculations are simplified illustrations and will not match your actual liability or insurer quotes.</p>
+      <p><b>No liability.</b> To the maximum extent permitted by law, the author, licensor, and distributors accept <b>no liability</b> for any loss or damage arising from use of, or reliance on, this tool. You use it entirely at your own risk.</p>
+      <p><b>Your data.</b> All calculations run locally in your browser. Saved scenarios use your browser's local storage on this device only. No data is transmitted to any server.</p>
+      <p><b>Intellectual property.</b> This software and its design are proprietary. Copying, redistribution, reverse-engineering, or resale is prohibited without written permission.</p>
+    </div>
+    <div id="discNeedCheck">Please tick the box to confirm you have read and accept the terms.</div>
+    <label class="disc-check"><input type="checkbox" id="discCheck"><span>I have read and I accept these terms. I understand this is an educational simulation, not financial advice, and I use it at my own risk.</span></label>
+    <div class="disc-actions">
+      <button id="discDecline" class="ghost">Decline &amp; exit</button>
+      <button id="discAccept" class="primary">I Agree — Enter</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP (hidden until disclaimer accepted) -->
+<div id="appRoot">
+<header class="top">
+  <div class="brand">
+    <div class="logo">₹</div>
+    <div>
+      <h1>WealthHorizon<span class="pill-pro">PRO</span></h1>
+      <small>Retirement &amp; Pension What-If Planner &middot; Fully offline &middot; India</small>
+    </div>
+  </div>
+  <div class="toolbar"><button id="btnPrintReport" class="primary" title="Print a 1-page A4 summary of your selected inputs">🖨 Print / PDF</button>
+    <button id="btnReset" class="ghost" title="Reset all inputs to defaults">↺ Reset</button>
+    <button id="btnSave" title="Save current scenario to this browser">💾 Save</button>
+    <button id="btnCsvProj" title="Download year-by-year projection">⬇ Projection CSV</button>
+    <button id="btnCsvScn" title="Download scenario summary">⬇ Scenario CSV</button>
+    <button id="btnJson" title="Export your assumptions as JSON">⬇ JSON</button>
+    <button id="btnImport" title="Import assumptions from JSON">⬆ Import</button>
+    <input type="file" id="fileImport" accept="application/json" style="display:none">
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <h2>Design a retirement you won't outlive.</h2>
+      <p>Change any assumption and instantly see your corpus, pension, funding gap, spouse protection, healthcare stress and success probability — all mathematically linked, all animated, all private to your device.</p>
+    </div>
+    <div class="cta">
+      <button class="gold" onclick="document.querySelector('#tabbar button')&&document.querySelector('#tabbar button').scrollIntoView({behavior:'smooth'})">Explore your plan ↓</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <aside class="sidebar" id="sidebar">
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <select id="scenarioSelect" style="flex:1;background:#0f0922;border:1px solid var(--line);color:var(--ink);padding:8px;border-radius:10px"></select>
+    </div>
+    <div class="scn-controls">
+      <button id="btnLoadScn" title="Load selected saved scenario">Load</button>
+      <button id="btnDupScn" title="Duplicate current as new">Duplicate</button>
+      <button id="btnDelScn" class="danger" title="Delete selected saved scenario">Delete</button>
+    </div>
+    <div id="validationMsgs"></div>
+    <div id="inputGroups"></div>
+  </aside>
+
+  <main class="main">
+    <div class="section" style="padding:14px">
+      <div id="statusBanner" class="status s-red"><span class="dot"></span><span id="statusText">Calculating…</span></div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head"><h2>📊 Dashboard KPIs</h2><small class="muted">Everything recalculates &amp; re-animates instantly on any change</small></div>
+      <div class="kpigrid" id="kpiGrid"></div>
+    </div>
+
+    <div class="section">
+      <div class="tabbar" id="tabbar"></div>
+
+      <div class="tabpane on" data-pane="projection">
+        <div class="chgrid">
+          <div class="chartcard"><div class="ch-head"><h3>Corpus growth</h3><select data-chart="corpus"></select></div><div class="chartbox"><canvas id="chartCorpus" height="92"></canvas></div><div class="legend" id="legendCorpus"></div></div>
+          <div class="chartcard"><div class="ch-head"><h3>Required vs projected</h3><select data-chart="reqproj"></select></div><div class="chartbox"><canvas id="chartReqVsProj" height="92"></canvas></div><div style="margin-top:8px"><div class="thermo" id="thermo"><div id="thermoFill"></div><div class="lbl" id="thermoLbl"></div></div></div></div>
+          <div class="chartcard"><div class="ch-head"><h3>Contributions vs growth</h3><select data-chart="contrib"></select></div><div class="chartbox"><canvas id="chartContribGrowth" height="92"></canvas></div><div class="legend" id="legendContrib"></div></div>
+          <div class="chartcard"><div class="ch-head"><h3>Income sources (monthly)</h3><select data-chart="income"></select></div><div class="chartbox"><canvas id="chartIncomeSrc" height="92"></canvas></div><div class="legend" id="legendIncome"></div></div>
+        </div>
+        <hr class="sep">
+        <h3>Year-by-year accumulation</h3>
+        <div class="tablewrap" style="max-height:320px"><table id="accTable"></table></div>
+        <h3 style="margin-top:16px">Post-retirement corpus depletion</h3>
+        <div class="tablewrap" style="max-height:320px"><table id="depTable"></table></div>
+      </div>
+
+      <div class="tabpane" data-pane="portfolio">
+        <div class="grid2">
+          <div class="chartcard"><div class="ch-head"><h3>Portfolio allocation</h3><select data-chart="donut"></select></div><div class="chartbox" style="display:flex;justify-content:center"><canvas id="chartDonut" width="240" height="116"></canvas></div><div class="legend" id="legendDonut"></div></div>
+          <div><h3>Allocation detail</h3><div id="allocWarn"></div><div class="tablewrap"><table id="allocTable"></table></div><button id="btnNormalize" style="margin-top:10px">⚖ Normalize to 100%</button></div>
+        </div>
+      </div>
+
+      <div class="tabpane" data-pane="scenarios">
+        <h3>Preset what-if scenarios (side-by-side)</h3>
+        <p class="muted" style="font-size:12.5px">Each column recomputes the full model with only the noted change. Click a preset to apply it live.</p>
+        <div class="scn-controls" id="presetButtons"></div>
+        <div class="tablewrap"><table id="scenarioTable"></table></div>
+        <hr class="sep">
+        <div class="chartcard"><div class="ch-head"><h3>Scenario comparison — funding %</h3><select data-chart="scncompare"></select></div><div class="chartbox"><canvas id="chartScnCompare" height="92"></canvas></div></div>
+      </div>
+
+      <div class="tabpane" data-pane="sensitivity">
+        <h3>Sensitivity matrix — real monthly pension</h3>
+        <p class="muted" style="font-size:12.5px">Rows = investment return, Columns = inflation. Each cell = achievable pension in today's money, coloured vs your ₹ target.</p>
+        <div class="tablewrap"><table id="sensTable"></table></div>
+        <div class="legend" style="margin-top:10px"><span><i style="background:rgba(34,197,94,.7)"></i>Target achieved (100%+)</span><span><i style="background:rgba(234,179,8,.7)"></i>75–99%</span><span><i style="background:rgba(255,159,69,.7)"></i>50–74%</span><span><i style="background:rgba(239,68,68,.7)"></i>Below 50%</span></div>
+        <hr class="sep">
+        <div class="grid2">
+          <div class="chartcard"><div class="ch-head"><h3>Inflation impact on your target</h3><select data-chart="inflation"></select></div><div class="chartbox"><canvas id="chartInflation" height="92"></canvas></div><div class="legend" id="legendInflation"></div></div>
+          <div><div class="tablewrap"><table id="inflTable"></table></div></div>
+        </div>
+      </div>
+
+      <div class="tabpane" data-pane="montecarlo">
+        <h3>Monte Carlo simulation <span class="badge-assume">simulation, not a guarantee</span></h3>
+        <div class="three" style="margin-bottom:12px">
+          <div class="field"><label>Return volatility (σ) %</label><input type="number" id="mcVol" value="15" step="0.5"></div>
+          <div class="field"><label>Simulations</label><input type="number" id="mcSims" value="1000" step="500"></div>
+          <div class="field"><label>Random seed</label><input type="number" id="mcSeed" value="12345"></div>
+        </div>
+        <button id="btnRunMC" class="primary">▶ Run simulation</button>
+        <div id="mcResults" style="margin-top:14px"></div>
+        <div class="chartcard" style="margin-top:12px"><div class="ch-head"><h3>Percentile outcomes</h3><select data-chart="mc"></select></div><div class="chartbox"><canvas id="chartMC" height="92"></canvas></div></div>
+      </div>
+
+      <div class="tabpane" data-pane="spouse">
+        <h3>Spouse continuation analysis</h3>
+        <p class="muted" style="font-size:12.5px">What happens to household income if the primary person passes away at each age. Survivor ratio = spouse income ÷ household income just before death.</p>
+        <div class="tablewrap"><table id="spouseTable"></table></div>
+        <hr class="sep">
+        <div class="chartcard"><div class="ch-head"><h3>Survivor income vs pre-death income</h3><select data-chart="spouse"></select></div><div class="chartbox"><canvas id="chartSpouse" height="92"></canvas></div><div class="legend" id="legendSpouse"></div></div>
+      </div>
+
+      <div class="tabpane" data-pane="healthcare">
+        <h3>Healthcare stress test <span class="badge-assume">healthcare inflation &gt; general inflation</span></h3>
+        <div class="grid2">
+          <div class="chartcard"><div class="ch-head"><h3>Healthcare cost by age</h3><select data-chart="health"></select></div><div class="chartbox"><canvas id="chartHealth" height="92"></canvas></div><div class="legend" id="legendHealth"></div></div>
+          <div><div class="tablewrap"><table id="healthTable"></table></div></div>
+        </div>
+        <div id="healthVerdict" style="margin-top:12px"></div>
+      </div>
+
+      <div class="tabpane" data-pane="reverse">
+        <h3>Required investment calculator</h3>
+        <div class="tablewrap"><table id="reqSipTable"></table></div>
+        <hr class="sep">
+        <h3>Reverse what-if calculators</h3>
+        <div id="reverseCards" class="kpigrid"></div>
+      </div>
+
+      <div class="tabpane" data-pane="tax">
+        <h3>Tax model <span class="badge-assume">illustrative only</span></h3>
+        <p class="muted" style="font-size:12.5px">Retirement income is <b>not</b> automatically tax-free. Below separates tax-free SWP/withdrawals from taxable annuity income using your editable assumptions.</p>
+        <div class="tablewrap"><table id="taxTable"></table></div>
+      </div>
+
+      <div class="tabpane" data-pane="action">
+        <h3>Recommendation engine</h3>
+        <div id="recList"></div>
+        <hr class="sep">
+        <h3>Retirement timeline &amp; milestones</h3>
+        <div class="tablewrap"><table id="milestoneTable"></table></div>
+      </div>
+
+      <div class="tabpane" data-pane="method">
+        <h3>Assumptions &amp; methodology</h3>
+        <div id="methodBody" class="disclaim"></div>
+        <hr class="sep">
+        <h3>⚠ Important financial warnings</h3>
+        <div class="warnbox" id="warnBody"></div>
+      </div>
+
+      <div class="tabpane" data-pane="diag">
+        <h3>QA / Calculation diagnostics</h3>
+        <p class="muted" style="font-size:12.5px">Runs unit, linkage, sanity (monotonicity), boundary, chart-safety, animation and regression tests. Nothing is hidden.</p>
+        <button id="btnRunTests" class="primary">▶ Run all tests</button>
+        <div class="diag-summary" id="diagSummary" style="margin-top:14px"></div>
+        <div class="tablewrap" style="max-height:460px"><table id="diagTable"></table></div>
+      </div>
+    </div>
+
+    <footer class="section disclaim" style="text-align:center">
+      <b>WealthHorizon PRO</b> — educational planning simulator, not personalised or regulated investment advice.
+      Single offline file &middot; No server, API, CDN or internet required &middot; © <span id="yr"></span>.
+    </footer>
+  </main>
+</div>
+</div><!-- /appRoot -->
+
+<script>
+!function(e){"use strict";function t(e,t,n,r){r=r||0;for(var a=Math.pow(1+t,1/12)-1,i=0,o=e,s=Math.round(12*n),u=1;u<=s;u++)u>1&&(u-1)%12==0&&(o*=1+r),i+=o*Math.pow(1+a,s-u);return i}function n(e,t,n){return e*Math.pow(1+t,n)}function r(e,t,n,r){r=r||0;for(var a=0,i=e,o=0;o<n;o++)a+=i*Math.pow(1+t,n-o),i*=1+r;return a}function a(e){return function(){e=(e|=0)+1831565813|0;var t=Math.imul(e^e>>>15,1|e);return(((t=t+Math.imul(t^t>>>7,61|t)^t)^t>>>14)>>>0)/4294967296}}function i(e,t,n){var r=Math.max(1e-12,e()),a=e();return t+n*Math.sqrt(-2*Math.log(r))*Math.cos(2*Math.PI*a)}function o(e){if(!isFinite(e))return"—";var t=e<0,n=(e=Math.abs(Math.round(e))).toString(),r=n.substring(n.length-3),a=n.substring(0,n.length-3);return""!==a&&(r=","+r),(t?"-₹":"₹")+(a.replace(/\B(?=(\d{2})+(?!\d))/g,",")+r)}var s={futureValue:function(e,t,n){return e*Math.pow(1+t,n)},presentValue:function(e,t,n){return e/Math.pow(1+t,n)},sipFutureValue:t,sipTotalContributions:function(e,t,n){n=n||0;for(var r=0,a=e,i=0;i<t;i++)r+=12*a,a*=1+n;return r},sipFinalYearAmount:function(e,t,n){return n=n||0,e*Math.pow(1+n,Math.max(0,t-1))},lumpFutureValue:n,annualLumpFutureValue:r,yearsToRetirement:function(e,t){return Math.max(0,t-e)},inflationAdjustedPension:function(e,t,n){return e*Math.pow(1+t,n)},requiredCorpus:function(e,t){return t<=0?1/0:e/t},fundingRatio:function(e,t){return t<=0||!isFinite(t)?0:e/t*100},shortfall:function(e,t){return e-t},monthlyIncomeFromCorpus:function(e,t){return e*t/12},realMonthlyIncome:function(e,t,n){return e/Math.pow(1+t,n)},annuityMonthlyIncome:function(e,t){return e*t/12},spouseAgeAt:function(e,t){return e+t},healthcareFutureCost:function(e,t,n){return e*Math.pow(1+t,n)},weightedInflation:function(e){var t=0,n=0;return e.forEach(function(e){t+=e.weight,n+=e.rate*e.weight}),0===t?0:n/t},requiredSip:function(e,n,r,a,i,o){var s=e-n-r;if(s<=0)return 0;for(var u=0,l=1e9,c=0;c<200;c++){var p=(u+l)/2;t(p,a,i,o)<s?u=p:l=p}return(u+l)/2},requiredReturn:function(e,a,i,o,s,u){var l=-.5,c=1;function p(e){return t(a,e,s,u)+n(i,e,s)+r(o,e,s,0)}if(p(c)<e)return 1/0;for(var d=0;d<200;d++){var f=(l+c)/2;p(f)<e?l=f:c=f}return(l+c)/2},requiredRetirementAge:function(e,t,n,r,a){a=a||75;for(var i=e+1;i<=a;i+=.5)if(r(i)>=n)return i;return 1/0},buildCorpusByBucket:function(e,a,i,o,s,u,l){var c={total:0,byBucket:{}};return l.forEach(function(l){var p=t(e*l.alloc,l.return,a,i)+n(o*l.alloc,l.return,a)+r(s*l.alloc,l.return,a,i)+n(u*l.alloc,l.return,a);c.byBucket[l.key]=p,c.total+=p}),c},simulateDepletion:function(e,t,n,r,a,i){for(var o=[],s=e,u=a,l=null,c=t;c<=n;c++){var p=s,d=p*r,f=p+d-u;o.push({age:c,opening:p,ret:d,withdrawal:u,realWithdrawal:u/Math.pow(1+i,c-t),closing:f}),f<=0&&null===l?(l=c,s=0,u*=1+i):(s=Math.max(0,f),u*=1+i)}return{rows:o,survivalAge:l,endCorpus:s}},monteCarlo:function(e){for(var t=a(e.seed||12345),n=[],r=0,o=0;o<e.sims;o++){for(var s=e.existingCorpus,u=e.monthlySip,l=0;l<e.years;l++){var c=i(t,e.expReturn,e.retVol);s=s*(1+c)+12*u*(1+c/2),u*=1+e.stepUp}n.push(s),s>=e.targetCorpus&&r++}function p(e){var t=Math.min(n.length-1,Math.max(0,Math.floor(e/100*n.length)));return n[t]}return n.sort(function(e,t){return e-t}),{successProb:r/e.sims*100,p10:p(10),p25:p(25),median:p(50),p75:p(75),p90:p(90),min:n[0],max:n[n.length-1],all:n}},percentile:function(e,t){return e.length?e[Math.min(e.length-1,Math.max(0,Math.floor(t/100*e.length)))]:0},mulberry32:a,normalSample:i,formatINR:o,formatCr:function(e){if(!isFinite(e))return"—";var t=e<0;return(e=Math.abs(e))>=1e7?(t?"-":"")+"₹"+(e/1e7).toFixed(2)+" Cr":e>=1e5?(t?"-":"")+"₹"+(e/1e5).toFixed(2)+" L":o(t?-e:e)}};"undefined"!=typeof module&&module.exports&&(module.exports=s),e.RetireEngine=s}("undefined"!=typeof window?window:this),function(){"use strict";var e=window.RetireEngine,t=e.formatCr,n=(e.formatINR,[{title:"A · Personal profile",open:!0,fields:[{k:"currentAge",l:"Current age",t:"rng",min:18,max:70,step:1,v:40,help:"Your age today. Drives years-to-retirement and every horizon in the model."},{k:"retirementAge",l:"Retirement age",t:"rng",min:45,max:75,step:1,v:60,help:"The age you stop working and begin drawing retirement income."},{k:"lifeExp",l:"Your life expectancy",t:"rng",min:70,max:105,step:1,v:90,help:"The age until which your retirement income must last."},{k:"spouseAge",l:"Spouse current age",t:"rng",min:18,max:75,step:1,v:35,help:"Used for the spouse planning horizon and survivor-income analysis."},{k:"spouseLifeExp",l:"Spouse life expectancy",t:"rng",min:70,max:105,step:1,v:92,help:"Income ideally lasts the longer-lived spouse."},{k:"city",l:"City",t:"txt",v:"Bengaluru",help:"For your reference only; does not change the math."},{k:"country",l:"Country",t:"txt",v:"India",help:"For your reference only; does not change the math."}]},{title:"B · Retirement goal",open:!0,fields:[{k:"targetToday",l:"Desired monthly pension (today's ₹)",t:"num",v:15e4,help:"The purchasing power you want, in TODAY's rupees. It is inflated to a future figure automatically."},{k:"pensionStartAge",l:"Pension start age",t:"rng",min:45,max:75,step:1,v:60,help:"The age income begins (usually equals retirement age)."},{k:"pensionInflationLinked",l:"Pension rises with inflation post-retirement",t:"chk",v:!0,help:"If enabled, each yearly withdrawal grows with inflation to preserve purchasing power."},{k:"legacy",l:"Legacy desired after both pass (today's ₹)",t:"num",v:0,help:"An estate you wish to leave behind. It is inflated and added to the required corpus."}]},{title:"C · Investment inputs",open:!0,fields:[{k:"sip",l:"Current monthly SIP (₹)",t:"num",v:2e4,help:"Your starting monthly investment amount."},{k:"stepUp",l:"Annual SIP step-up %",t:"rng",min:0,max:25,step:1,v:10,help:"The percentage you increase your SIP by every year (e.g. with salary hikes)."},{k:"maxSip",l:"Maximum monthly SIP (₹)",t:"num",v:2e5,help:"An upper cap used for sanity in the required-SIP calculator."},{k:"existingCorpus",l:"Existing retirement corpus (₹)",t:"num",v:0,help:"Money already invested for retirement today. It grows at your blended return."},{k:"annualLump",l:"Additional annual lump sum (₹/yr)",t:"num",v:0,help:"A yearly investment beyond your SIP (e.g. an annual bonus)."},{k:"oneTime",l:"One-time lump sum now (₹)",t:"num",v:0,help:"A single amount invested today."},{k:"employerContrib",l:"Employer monthly contribution (₹)",t:"num",v:0,help:"Added to your monthly SIP (e.g. EPF/NPS employer share)."}]},{title:"D · Inflation assumptions",open:!1,fields:[{k:"infGeneral",l:"General inflation %",t:"rng",min:0,max:15,step:.5,v:6,help:"The headline CPI assumption used to inflate your target and required corpus."},{k:"infBengaluru",l:"Bengaluru lifestyle inflation %",t:"rng",min:0,max:15,step:.5,v:7,help:"Metro lifestyle cost creep (used only in the weighted basket if enabled)."},{k:"infHealthcare",l:"Healthcare inflation %",t:"rng",min:0,max:20,step:.5,v:12,help:"Typically much higher than general inflation. Drives the healthcare stress test."},{k:"infHousing",l:"Housing inflation %",t:"rng",min:0,max:15,step:.5,v:6,help:"Rent / property upkeep growth (weighted basket)."},{k:"infFood",l:"Food inflation %",t:"rng",min:0,max:15,step:.5,v:7,help:"Food basket growth (weighted basket)."},{k:"infTravel",l:"Travel inflation %",t:"rng",min:0,max:15,step:.5,v:8,help:"Leisure / travel cost growth (weighted basket)."},{k:"useBasket",l:"Use weighted retirement inflation basket",t:"chk",v:!1,help:"If enabled, effective inflation is a weighted blend of the categories below instead of general inflation."},{k:"wHousing",l:"Weight · housing",t:"num",v:30,help:"Relative weight of housing in the basket."},{k:"wFood",l:"Weight · food",t:"num",v:25,help:"Relative weight of food in the basket."},{k:"wHealthcare",l:"Weight · healthcare",t:"num",v:20,help:"Relative weight of healthcare in the basket."},{k:"wTravel",l:"Weight · travel",t:"num",v:10,help:"Relative weight of travel in the basket."},{k:"wGeneral",l:"Weight · general/other",t:"num",v:15,help:"Relative weight of general/other in the basket."}]},{title:"E · Return assumptions %",open:!1,fields:[{k:"rEquity",l:"Equity mutual funds",t:"rng",min:0,max:20,step:.5,v:13,help:"Expected long-run annual return on equity mutual funds."},{k:"rIndex",l:"Index funds",t:"rng",min:0,max:20,step:.5,v:12,help:"Expected annual return on index funds."},{k:"rFlexi",l:"Flexi-cap funds",t:"rng",min:0,max:20,step:.5,v:12.5,help:"Expected annual return on flexi-cap funds."},{k:"rHybrid",l:"Hybrid funds",t:"rng",min:0,max:18,step:.5,v:10,help:"Expected annual return on hybrid funds."},{k:"rDebt",l:"Debt funds",t:"rng",min:0,max:12,step:.5,v:7,help:"Expected annual return on debt funds."},{k:"rPpf",l:"PPF",t:"rng",min:0,max:12,step:.1,v:7.1,help:"Assumed PPF rate (can change over time)."},{k:"rNps",l:"NPS (blended)",t:"rng",min:0,max:16,step:.5,v:10,help:"Blended expected return across your NPS equity/debt mix."},{k:"rCash",l:"Cash / liquid",t:"rng",min:0,max:9,step:.5,v:5,help:"Return on cash / liquid funds."},{k:"rPostRet",l:"Post-retirement portfolio",t:"rng",min:0,max:14,step:.5,v:8,help:"The (more conservative) return earned on your corpus DURING retirement."},{k:"rAnnuity",l:"Annuity payout rate",t:"rng",min:3,max:10,step:.1,v:6.3,help:"ASSUMPTION: the joint-life annuity payout rate. Real quotes vary by insurer and change over time."}]},{title:"F · Portfolio allocation % (total 100)",open:!1,fields:[{k:"aEquity",l:"Equity mutual funds",t:"rng",min:0,max:100,step:1,v:40,help:"% of monthly investment going to equity mutual funds."},{k:"aIndex",l:"Index funds",t:"rng",min:0,max:100,step:1,v:15,help:"% to index funds."},{k:"aFlexi",l:"Flexi-cap funds",t:"rng",min:0,max:100,step:1,v:10,help:"% to flexi-cap funds."},{k:"aHybrid",l:"Hybrid funds",t:"rng",min:0,max:100,step:1,v:10,help:"% to hybrid funds."},{k:"aDebt",l:"Debt funds",t:"rng",min:0,max:100,step:1,v:5,help:"% to debt funds."},{k:"aPpf",l:"PPF",t:"rng",min:0,max:100,step:1,v:8,help:"% to PPF."},{k:"aNps",l:"NPS",t:"rng",min:0,max:100,step:1,v:7,help:"% to NPS."},{k:"aCash",l:"Cash / liquid",t:"rng",min:0,max:100,step:1,v:2,help:"% to cash / liquid funds."},{k:"aAnnuity",l:"Annuity allocation",t:"rng",min:0,max:100,step:1,v:3,help:"% earmarked to buy an annuity at retirement (funds guaranteed income)."},{k:"aOther",l:"Other",t:"rng",min:0,max:100,step:1,v:0,help:"% to any other bucket."}]},{title:"G · Withdrawal & annuity",open:!1,fields:[{k:"withdrawalRate",l:"Retirement withdrawal rate %",t:"rng",min:1,max:10,step:.25,v:5,help:"The safe withdrawal rate. Required corpus = annual income ÷ this rate."},{k:"annuityType",l:"Annuity type",t:"sel",v:"joint",opts:[["single","Single life"],["joint","Joint life"],["joint100","Joint life 100% survivor"],["jointROP","Joint life + Return of Purchase Price"],["increasing","Increasing annuity"]],help:"Joint-life protects your spouse but usually reduces the starting pension."}]},{title:"H · Tax assumptions",open:!1,fields:[{k:"taxFreeShare",l:"% of SWP treated as tax-free capital",t:"rng",min:0,max:100,step:5,v:70,help:"An SWP is part return-of-capital (tax-free) and part gains (taxable). Illustrative."},{k:"taxRateGains",l:"Effective tax on taxable gains %",t:"rng",min:0,max:35,step:1,v:12.5,help:"Illustrative LTCG-style tax on the gains portion of withdrawals."},{k:"taxRateAnnuity",l:"Effective tax on annuity income %",t:"rng",min:0,max:35,step:1,v:15,help:"Annuity income is generally taxable at your slab rate."}]},{title:"I · Healthcare planning",open:!1,fields:[{k:"hcCurrent",l:"Current annual healthcare expense (₹)",t:"num",v:12e4,help:"Out-of-pocket costs plus premiums in TODAY's money."},{k:"hcInsurance",l:"Base insurance cover (₹)",t:"num",v:1e6,help:"Your base health insurance sum insured."},{k:"hcTopup",l:"Super top-up cover (₹)",t:"num",v:5e6,help:"Additional super top-up cover above the base."},{k:"hcReserve",l:"Dedicated healthcare reserve (₹)",t:"num",v:1e6,help:"A corpus you earmark specifically for medical out-of-pocket costs."}]}]),r=[{key:"aEquity",label:"Equity MF",color:"#7c5cff",ret:"rEquity"},{key:"aIndex",label:"Index",color:"#22d3ee",ret:"rIndex"},{key:"aFlexi",label:"Flexi-cap",color:"#4f8cff",ret:"rFlexi"},{key:"aHybrid",label:"Hybrid",color:"#f0a",ret:"rHybrid"},{key:"aDebt",label:"Debt",color:"#34d399",ret:"rDebt"},{key:"aPpf",label:"PPF",color:"#ffd166",ret:"rPpf"},{key:"aNps",label:"NPS",color:"#ff6ec7",ret:"rNps"},{key:"aCash",label:"Cash",color:"#94a3b8",ret:"rCash"},{key:"aAnnuity",label:"Annuity",color:"#ff9f45",ret:"rDebt"},{key:"aOther",label:"Other",color:"#c084fc",ret:"rHybrid"}],a={single:1,joint:.92,joint100:.86,jointROP:.8,increasing:.75},i={};n.forEach(function(e){e.fields.forEach(function(e){i[e.k]=e.v})});var o=JSON.parse(JSON.stringify(i)),s={corpus:"line",reqproj:"bar",contrib:"area",income:"bar",donut:"donut",scncompare:"bar",inflation:"bar",mc:"bar",spouse:"group",health:"bar"},u={line:["line","Line"],area:["area","Area"],bar:["bar","Bar"],donut:["donut","Donut"],pie:["pie","Pie"],group:["group","Grouped bar"]},l={corpus:["line","area","bar"],reqproj:["bar","line"],contrib:["area","line","bar"],income:["bar","line"],donut:["donut","pie"],scncompare:["bar","line"],inflation:["bar","line","area"],mc:["bar","line"],spouse:["group","bar"],health:["bar","line","area"]};function c(e){var t=[],n={};function r(e,r){n[e]=!0,t.push(r)}e.currentAge>0||r("currentAge","Current age must be greater than 0."),e.retirementAge>e.currentAge||r("retirementAge","Retirement age must be greater than current age."),e.lifeExp>e.retirementAge||r("lifeExp","Life expectancy must be greater than retirement age."),e.spouseAge>0||r("spouseAge","Spouse age must be greater than 0."),e.spouseLifeExp>0||r("spouseLifeExp","Spouse life expectancy must be greater than 0."),e.sip>=0||r("sip","SIP cannot be negative."),e.stepUp>=0||r("stepUp","Step-up cannot be negative."),e.infGeneral>=0||r("infGeneral","Inflation cannot be negative."),e.withdrawalRate>0||r("withdrawalRate","Withdrawal rate must be greater than 0."),e.targetToday>0||r("targetToday","Target pension must be greater than 0.");var a=p(e);return Math.abs(a-100)>.5&&t.push("Portfolio allocation totals "+a.toFixed(0)+"% (should be 100%)."),Object.keys(e).forEach(function(t){var n=e[t];"number"!=typeof n||isFinite(n)||r(t,t+" is not a finite number.")}),{msgs:t,invalid:n,allocOff:Math.abs(a-100)>.5,alloc:a}}function p(e){return r.reduce(function(t,n){return t+(+e[n.key]||0)},0)}function d(t){var n,i=e.yearsToRetirement(t.currentAge,t.retirementAge);n=t.useBasket?e.weightedInflation([{rate:t.infHousing/100,weight:t.wHousing},{rate:t.infFood/100,weight:t.wFood},{rate:t.infHealthcare/100,weight:t.wHealthcare},{rate:t.infTravel/100,weight:t.wTravel},{rate:t.infGeneral/100,weight:t.wGeneral}]):t.infGeneral/100;var o=e.inflationAdjustedPension(t.targetToday,n,i),s=12*o,u=e.futureValue(t.legacy,n,i),l=e.requiredCorpus(s,t.withdrawalRate/100)+u,c=(+t.sip||0)+(+t.employerContrib||0),p=r.map(function(e){return{key:e.key,alloc:(+t[e.key]||0)/100,return:(+t[e.ret]||0)/100}}),d=e.buildCorpusByBucket(c,i,t.stepUp/100,t.existingCorpus,t.annualLump,t.oneTime,p),h=d.total,g=d.byBucket.aAnnuity||0,m=h-g,v=a[t.annuityType]||1,y=e.annuityMonthlyIncome(g,t.rAnnuity/100*v),b=e.monthlyIncomeFromCorpus(m,t.withdrawalRate/100),w=b+y,k=e.realMonthlyIncome(w,n,i),x=e.fundingRatio(h,l),C=e.shortfall(l,h),M=p.reduce(function(e,t){return e+t.alloc*t.return},0),S=e.lumpFutureValue(t.existingCorpus,M,i)+e.annualLumpFutureValue(t.annualLump,M,i,t.stepUp/100)+e.lumpFutureValue(t.oneTime,M,i),R=Math.max(0,e.requiredSip(l,S,0,M,i,0)-(+t.employerContrib||0)),A=Math.max(0,e.requiredSip(l,S,0,M,i,.05)-(+t.employerContrib||0)),T=Math.max(0,e.requiredSip(l,S,0,M,i,.1)-(+t.employerContrib||0)),P=Math.max(0,e.requiredSip(l,S,0,M,i,t.stepUp/100)-(+t.employerContrib||0)),F=e.sipTotalContributions(c,i,t.stepUp/100)+t.existingCorpus+t.oneTime+t.annualLump*i,L=e.sipFinalYearAmount(c,i,t.stepUp/100),I=h-F,q=e.requiredReturn(l,c,t.existingCorpus,t.annualLump,i,t.stepUp/100),E=e.requiredRetirementAge(t.currentAge,t.spouseAge,l,function(n){var r=n-t.currentAge;return e.buildCorpusByBucket(c,r,t.stepUp/100,t.existingCorpus,t.annualLump,t.oneTime,p).total},80),j=f(l,c,t.existingCorpus,t.annualLump,t.oneTime,p,i),H=function(t,n,r,a,i){for(var o=[],s=t.existingCorpus+t.oneTime,u=n,l=0;l<=i;l++){var c=t.currentAge+l,p=e.buildCorpusByBucket(n,l,t.stepUp/100,t.existingCorpus,t.annualLump,t.oneTime,r),d=0===l?0:12*u+t.annualLump;l>0&&(s+=12*u+t.annualLump);var f=12*e.inflationAdjustedPension(t.targetToday,a,l)/(t.withdrawalRate/100);o.push({age:c,year:(new Date).getFullYear()+l,sip:l<i?u:0,annualContrib:d,cumContrib:s,equity:(p.byBucket.aEquity||0)+(p.byBucket.aIndex||0)+(p.byBucket.aFlexi||0),debt:(p.byBucket.aDebt||0)+(p.byBucket.aHybrid||0)+(p.byBucket.aCash||0),ppf:p.byBucket.aPpf||0,nps:p.byBucket.aNps||0,total:p.total,targetCorpus:f,funding:e.fundingRatio(p.total,f)}),l<i&&(u*=1+t.stepUp/100)}return o}(t,c,p,n,i),N=12*b,O=Math.max(t.lifeExp,t.spouseAge+(t.spouseLifeExp-t.spouseAge),100),B=e.simulateDepletion(m,t.retirementAge,O,t.rPostRet/100,N,t.pensionInflationLinked?n:0),_=!B.survivalAge||B.survivalAge>=t.lifeExp,U=function(t,n,r,a,i,o){var s=[65,70,75,80,85,90],u="single"!==t.annuityType,l=s.map(function(s){var l=n.rows.find(function(e){return e.age===s}),c=l?Math.max(0,l.closing):s<t.retirementAge?o:0,p=t.spouseAge+(s-t.currentAge),d=e.monthlyIncomeFromCorpus(c,t.withdrawalRate/100),f=u?r:0,h=d+f,g=Math.max(0,s-t.retirementAge),m=i*Math.pow(1+(t.pensionInflationLinked?a:0),g);return{deathAge:s,spouseAge:p,remaining:c,swp:d,annuity:f,spouseIncome:h,household:m,ratio:m>0?h/m*100:0,legacy:c}});return{rows:l,isJoint:u}}(t,B,y,n,w,m),D=function(t,n){var r=[50,55,60,65,70,75,80,85,90],a=t.hcInsurance+t.hcTopup,i=r.map(function(r){var i=r-t.currentAge,o=i>=0?e.healthcareFutureCost(t.hcCurrent,t.infHealthcare/100,i):t.hcCurrent,s=.4*o,u=!(r>=t.retirementAge)||s<=12*n*.25;return{age:r,cost:o,coverage:a,oop:s,absorbable:u}}),o=t.hcReserve>=t.hcCurrent*Math.pow(1.12,20)*2;return{rows:i,coverage:a,reserveAdequate:o}}(t,w);return{yrs:i,effInf:n,futureTargetMonthly:o,annualTargetIncome:s,requiredCorpus:l,legacyFV:u,projectedCorpus:h,byBucket:d.byBucket,annuityCorpus:g,swpCorpus:m,annuityMonthly:y,swpMonthly:b,projNominalPension:w,projRealPension:k,achievableRealPension:k,fundingRatio:x,shortfall:C,blended:M,reqSipFlat:R,reqSip5:A,reqSip10:T,reqSipCust:P,totalContrib:F,finalYearSip:L,investmentGrowth:I,reqReturn:q,reqRetAge:E,reqStepUp:j,accRows:H,dep:B,survivesLife:_,spouse:U,health:D,effSip:c,endAge:O}}function f(t,n,r,a,i,o,s){var u=0,l=1;function c(t){return e.buildCorpusByBucket(n,s,t,r,a,i,o).total}if(c(l)<t)return 1/0;if(c(0)>=t)return 0;for(var p=0;p<120;p++){var d=(u+l)/2;c(d)<t?u=d:l=d}return(u+l)/2*100}function h(e){return e>=100?{cls:"s-green",tag:"ON TRACK",txt:"Goal mathematically funded",color:"#22c55e"}:e>=75?{cls:"s-yellow",tag:"CLOSE",txt:"Close — adjustment required",color:"#eab308"}:e>=50?{cls:"s-orange",tag:"GAP",txt:"Material funding gap",color:"#f97316"}:{cls:"s-red",tag:"ACTION NEEDED",txt:"Major funding gap",color:"#ef4444"}}function g(e){return e>=100?"cell-g":e>=75?"cell-y":e>=50?"cell-o":"cell-r"}window.__RP__={compute:d,validate:c,DEFAULTS:i,BUCKETS:r,ANNUITY_FACTOR:a,solveStepUp:f,statusFor:h,allocTotal:p};var m=function(e){return document.getElementById(e)};function v(e,t,n){var r=document.createElement(e);if(t)for(var a in t)r.setAttribute(a,t[a]);return null!=n&&(r.innerHTML=n),r}function y(){var e=m("inputGroups");e.innerHTML="",n.forEach(function(t){var n=v("details",{class:"group"});t.open&&n.setAttribute("open",""),n.appendChild(v("summary",null,t.title+'<span class="chev">▶</span>'));var r=v("div",{class:"body"});t.fields.forEach(function(e){r.appendChild(function(e){var t=v("div",{class:"field","data-fk":e.k}),n=v("label",null,"<span>"+e.l+"</span>");if(e.help){var r=v("span",{class:"help","data-tip":e.help,tabindex:"0"},"?");n.appendChild(r)}t.appendChild(n);var a=o[e.k];if("chk"===e.t){var i=v("label",{class:"chk"}),s=v("input",{type:"checkbox"});s.checked=!!a,s.id="in_"+e.k,s.addEventListener("change",function(){o[e.k]=s.checked,Y()}),i.appendChild(s),i.appendChild(v("span",null,"Toggle")),t.appendChild(i)}else if("sel"===e.t){var u=v("select",{id:"in_"+e.k});e.opts.forEach(function(e){var t=v("option",{value:e[0]},e[1]);e[0]===a&&(t.selected=!0),u.appendChild(t)}),u.addEventListener("change",function(){o[e.k]=u.value,Y()}),t.appendChild(u)}else if("rng"===e.t){var l=v("div",{class:"rangewrap"}),c=v("input",{type:"range",min:e.min,max:e.max,step:e.step,id:"in_"+e.k});c.value=a;var p=v("input",{type:"number",min:e.min,max:e.max,step:e.step,id:"inN_"+e.k});p.value=a,p.style.maxWidth="84px",c.addEventListener("input",function(){o[e.k]=+c.value,p.value=c.value,Y()}),p.addEventListener("input",function(){var t=parseFloat(p.value);isNaN(t)?o[e.k]=NaN:(o[e.k]=t,c.value=t),Y()}),l.appendChild(c),l.appendChild(p),t.appendChild(l)}else if("num"===e.t){var d=v("input",{type:"number",step:"any",id:"in_"+e.k});d.value=a,d.addEventListener("input",function(){var t=parseFloat(d.value);o[e.k]=isNaN(t)?NaN:t,Y()}),t.appendChild(d)}else{var f=v("input",{type:"text",id:"in_"+e.k});f.value=a,f.addEventListener("input",function(){o[e.k]=f.value,Y()}),t.appendChild(f)}return t}(e))}),n.appendChild(r),e.appendChild(n)})}function b(){n.forEach(function(e){e.fields.forEach(function(e){var t=o[e.k];if("chk"===e.t){var n=m("in_"+e.k);n&&(n.checked=!!t)}else if("sel"===e.t){var r=m("in_"+e.k);r&&(r.value=t)}else if("rng"===e.t){var a=m("in_"+e.k),i=m("inN_"+e.k);a&&(a.value=t),i&&(i.value=t)}else{var s=m("in_"+e.k);s&&(s.value=t)}})})}function w(e){var n=h(e.fundingRatio),r=e.fundingRatio>=100?"good":e.fundingRatio>=75?"warn":"bad",a=[{l:"Years to retirement",v:e.yrs+" yrs",s:"Age "+o.currentAge+" → "+o.retirementAge,c:"accent"},{l:"Future pension target",v:t(e.futureTargetMonthly)+"/mo",s:"nominal @ retirement",c:"accent"},{l:"Required corpus",v:t(e.requiredCorpus),s:"@ "+o.withdrawalRate+"% withdrawal",c:"accent"},{l:"Projected corpus",v:t(e.projectedCorpus),s:"your plan",c:r},{l:"Funding %",v:e.fundingRatio.toFixed(0)+"%",s:n.txt,c:r},{l:"Corpus shortfall",v:t(Math.max(0,e.shortfall)),s:e.shortfall<=0?"fully funded":"gap to close",c:r},{l:"Projected pension (nominal)",v:t(e.projNominalPension)+"/mo",s:"at retirement",c:r},{l:"Pension in today's value",v:t(e.projRealPension)+"/mo",s:"vs "+t(o.targetToday)+" goal",c:r},{l:"Required SIP (flat)",v:t(e.reqSipFlat)+"/mo",s:"to fully fund",c:"accent"},{l:"Final-year SIP",v:t(e.finalYearSip)+"/mo",s:"@ "+o.stepUp+"% step-up",c:"accent"},{l:"Total contributions",v:t(e.totalContrib),s:"over "+e.yrs+" yrs",c:"accent"},{l:"Investment growth",v:t(e.investmentGrowth),s:"compounding gains",c:"accent"},{l:"Spouse survivor pension",v:t(e.spouse.rows[2].spouseIncome)+"/mo",s:"if death at 75",c:"accent"},{l:"Healthcare reserve",v:t(o.hcReserve),s:e.health.reserveAdequate?"adequate":"review",c:e.health.reserveAdequate?"good":"warn"},{l:"Probability of success",v:window.__lastMC?window.__lastMC.successProb.toFixed(0)+"%":"run MC",s:"Monte Carlo",c:"accent"}],i=m("kpiGrid");i.innerHTML="",a.forEach(function(e){var t=v("div",{class:"kpi "+(e.c||"")});t.innerHTML='<div class="k-label">'+e.l+'</div><div class="k-val">'+e.v+'</div><div class="k-sub">'+e.s+"</div>",i.appendChild(t)});var s=m("statusBanner");s.className="status "+n.cls,m("statusText").textContent=n.tag+" · "+n.txt+" — "+e.fundingRatio.toFixed(0)+"% funded";var u=s.querySelector(".dot");u&&(u.style.background=n.color,u.style.color=n.color)}function k(e,t){var n="<thead><tr>"+e.map(function(e){return"<th>"+e+"</th>"}).join("")+"</tr></thead><tbody>";return(n+=t.map(function(e){return"<tr>"+e.map(function(e){return e&&void 0!==e.h?'<td class="'+(e.cls||"")+'">'+e.h+"</td>":"<td>"+e+"</td>"}).join("")+"</tr>"}).join(""))+"</tbody>"}var x=[{id:"p1",name:"₹20k flat",patch:{sip:2e4,stepUp:0}},{id:"p2",name:"₹20k + 5%",patch:{sip:2e4,stepUp:5}},{id:"p3",name:"₹20k + 10%",patch:{sip:2e4,stepUp:10}},{id:"p4",name:"Conservative",patch:{rEquity:10,rIndex:9,rFlexi:9.5,rHybrid:8,rPostRet:6}},{id:"p5",name:"Base case",patch:{}},{id:"p6",name:"Optimistic",patch:{rEquity:15,rIndex:14,rFlexi:14.5,rHybrid:12,rPostRet:9}},{id:"p7",name:"High inflation",patch:{infGeneral:9}},{id:"p8",name:"Healthcare stress",patch:{infHealthcare:16,hcCurrent:18e4}},{id:"p9",name:"Retire 55",patch:{retirementAge:55,pensionStartAge:55}},{id:"p10",name:"Retire 60",patch:{retirementAge:60,pensionStartAge:60}},{id:"p11",name:"Retire 65",patch:{retirementAge:65,pensionStartAge:65}}];var C=null,M=[4,5,6,7,8,9,10];var S=140,R=80,A=1;function T(){return window.performance&&window.performance.now?window.performance.now():Date.now()}function P(e){return 1-Math.pow(1-e,3)}function F(e){return e.map(function(e){return isFinite(e)?e:0})}function L(e){if(!e||!e.getContext)return null;var t=window.devicePixelRatio||1,n=(e.getBoundingClientRect?e.getBoundingClientRect():{width:0}).width;if(!(n>0)){var r=e.parentElement?e.parentElement.clientWidth:0;n=r>0?r-24:parseInt(e.getAttribute("width"),10)||300}n=Math.max(S,Math.floor(n));var a=parseInt(e.getAttribute("height"),10)||150;a=Math.max(R,a),e.width=Math.round(n*t),e.height=Math.round(a*t),e.style.height=a+"px";var i=e.getContext("2d");return i.setTransform(t,0,0,t,0,0),i.clearRect(0,0,n,a),{ctx:i,w:n,h:a,ok:n>=S&&a>=R}}var I={grid:"#2a2550",txt:"#a9a5cf",ink:"#f4f1ff"};function q(e,t,n,r){e.strokeStyle=I.grid,e.lineWidth=1,e.beginPath(),e.moveTo(r,8),e.lineTo(r,n-r),e.lineTo(t-6,n-r),e.stroke()}function E(t,n,r,a,i,o){t.fillStyle=I.txt,t.font="9px Segoe UI";for(var s=0;s<=4;s++){var u=i*s/4,l=r-a-s/4*(r-a-8);t.fillText(o?u.toFixed(0)+"%":e.formatCr(u),1,l+3),t.strokeStyle="rgba(42,37,80,.6)",t.beginPath(),t.moveTo(a,l),t.lineTo(n-6,l),t.stroke()}}function j(e,t){if(e){if(e.__anim){try{cancelAnimationFrame(e.__anim)}catch(e){}e.__anim=null}var n=T();!function r(){var a=Math.min(1,(T()-n)/A),i=P(a);try{t(i)}catch(e){}e.__anim=a<1?requestAnimationFrame(r):null}()}}function H(e,t,n){n=n||{};var r=L(e);if(r&&r.ok){var a=null==n.progress?1:n.progress,i=r.ctx,o=r.w,s=r.h,u=38;t=t.map(function(e){return{name:e.name,color:e.color,fill:e.fill,data:F(e.data)}});var l=[].concat.apply([],t.map(function(e){return e.data})),c=1.1*Math.max.apply(null,l);c>0||(c=1),q(i,o,s,u),E(i,o,s,u,c);var p=Math.max(1,t[0].data.length),d=Math.max(1,o-6-u),f=Math.max(1,s-u-8),h=a*(p-1);if(t.forEach(function(e){if(e.fill||n.area){i.beginPath();for(var t=!0,r=0;r<p&&!(r>h);r++){var a=v(r),o=y(e.data[r]);t?(i.moveTo(a,o),t=!1):i.lineTo(a,o)}var l=Math.min(p-1,Math.floor(h));i.lineTo(v(l),s-u),i.lineTo(v(0),s-u),i.closePath(),i.globalAlpha=.16,i.fillStyle=e.color,i.fill(),i.globalAlpha=1}i.strokeStyle=e.color,i.lineWidth=2.4,i.beginPath();var c=!1;for(r=0;r<p&&!(r>h+1);r++){var d=1;if(r>h&&(d=h-(r-1)),r>h&&r>0){var f=v(r-1),g=y(e.data[r-1]);a=f+(v(r)-f)*d,o=g+(y(e.data[r])-g)*d}else a=v(r),o=y(e.data[r]);c?i.lineTo(a,o):(i.moveTo(a,o),c=!0)}i.stroke()}),i.fillStyle=I.txt,n.labels)for(var g=Math.max(1,Math.ceil(p/6)),m=0;m<p;m+=g)i.fillText(n.labels[m],v(m)-8,s-u+13);e.__hit={type:"line",X:v,Y:y,series:t,n:p,labels:n.labels,pad:u,w:o,h:s}}function v(e){return u+d*(e/(p-1||1))}function y(e){return s-u-f*(e/c)}}function N(e,t,n,r,a){a=a||{};var i=L(e);if(i&&i.ok){var o=null==a.progress?1:a.progress,s=i.ctx,u=i.w,l=i.h,c=38;(n=F(n)).length||(n=[0],t=[""]);var p=1.15*Math.max.apply(null,n);p>0||(p=1),q(s,u,l,c),E(s,u,l,c,p,a.pct);var d=Math.max(1,(u-6-c)/n.length),f=Math.max(1,.6*d);n.forEach(function(e,n){var a=e/p*(l-c-8),i=Math.max(0,a*o),u=c+d*n+.2*d,h=l-c-i,g=Array.isArray(r)?r[n]:r;if(i>0){var m=s.createLinearGradient(0,h,0,l-c);m.addColorStop(0,g),m.addColorStop(1,g+"55"),s.fillStyle=m,s.fillRect(u,h,f,i)}s.fillStyle=I.txt,s.font="9px Segoe UI",s.save(),s.translate(u+f/2,l-c+12);var v=String(t[n]);s.fillText(v.length>10?v.slice(0,9)+"…":v,-12,0),s.restore()}),e.__hit={type:"bar",labels:t,values:n,pad:c,gap:d,bw:f,ht:l,pct:a.pct}}}function O(e,t,n,r,a){a=a||{};var i=L(e);if(!i||!i.ok)return"";var o=null==a.progress?1:a.progress,s=i.ctx,u=i.w,l=i.h,c=u/2,p=l/2,d=Math.max(8,Math.min(u,l)/2-6),f=r?Math.max(0,.55*d):0,h=t.reduce(function(e,t){return e+(isFinite(t.v)?t.v:0)},0);if(!(h>0))return s.strokeStyle=I.grid,s.lineWidth=2,s.beginPath(),s.arc(c,p,d,0,2*Math.PI),s.stroke(),'<span class="muted">No allocation</span>';var g=o*Math.PI*2,m=-Math.PI/2,v=0,y="";return t.forEach(function(e){var t=isFinite(e.v)?e.v:0;if(!(t<=0)){var n=t/h*Math.PI*2,r=Math.min(n,Math.max(0,g-v));r>0&&(s.beginPath(),s.moveTo(c,p),s.arc(c,p,d,m,m+r),s.closePath(),s.fillStyle=e.color,s.fill()),m+=n,v+=n,y+='<span><i style="background:'+e.color+'"></i>'+e.label+" "+(t/h*100).toFixed(0)+"%</span>"}}),r&&f>0&&(s.globalCompositeOperation="destination-out",s.beginPath(),s.arc(c,p,f,0,2*Math.PI),s.fill(),s.globalCompositeOperation="source-over",n&&(s.fillStyle=I.ink,s.font="bold 14px Segoe UI",s.textAlign="center",s.fillText(n,c,p+4),s.textAlign="left")),y}function B(e,t,n,r,a,i){var o=m(t);if(o){var u=s[e];a&&m(a)&&(m(a).innerHTML=i||""),j(o,function(e){"bar"===u?N(o,n.map(function(e){return e.name}),n.map(function(e){var t=F(e.data);return t[t.length-1]}),n.map(function(e){return e.color}),{progress:e}):H(o,n,{labels:r,area:"area"===u,progress:e})})}}function _(e,t,n,r,a,i){var o=m(t);if(o){var u=s[e];i=i||{},j(o,function(e){"line"===u||"area"===u?H(o,[{data:r,color:Array.isArray(a)?a[0]:a,name:""}],{labels:n,area:"area"===u,progress:e}):N(o,n,r,a,{pct:i.pct,progress:e})})}}function U(e){var n=e.accRows.map(function(e){return e.age});B("corpus","chartCorpus",[{data:e.accRows.map(function(e){return e.total}),color:"#7c5cff",name:"Projected"},{data:e.accRows.map(function(e){return e.targetCorpus}),color:"#ff9f45",name:"Target"}],n,"legendCorpus",'<span><i style="background:#7c5cff"></i>Projected corpus</span><span><i style="background:#ff9f45"></i>Target corpus</span>'),_("reqproj","chartReqVsProj",["Required","Projected"],[e.requiredCorpus,e.projectedCorpus],["#ff9f45","#7c5cff"]);var a=Math.min(100,Math.max(0,e.fundingRatio)),i=h(e.fundingRatio);m("thermoFill")&&(m("thermoFill").style.width=a+"%",m("thermoFill").style.background=i.color),m("thermoLbl")&&(m("thermoLbl").textContent=e.fundingRatio.toFixed(0)+"% funded"),B("contrib","chartContribGrowth",[{data:e.accRows.map(function(e){return e.cumContrib}),color:"#34d399",name:"Contributions"},{data:e.accRows.map(function(e){return e.total}),color:"#7c5cff",name:"Total corpus"}],n,"legendContrib",'<span><i style="background:#34d399"></i>Contributions</span><span><i style="background:#7c5cff"></i>Total corpus</span>'),_("income","chartIncomeSrc",["SWP","Annuity","Target"],[e.swpMonthly,e.annuityMonthly,e.futureTargetMonthly],["#7c5cff","#ff9f45","#22d3ee"]),m("legendIncome")&&(m("legendIncome").innerHTML='<span><i style="background:#7c5cff"></i>SWP</span><span><i style="background:#ff9f45"></i>Annuity</span><span><i style="background:#22d3ee"></i>Target</span>'),function(e){var n=m("chartDonut");if(n){var a=r.map(function(e){return{label:e.label,v:+o[e.key]||0,color:e.color}}),i=O(n,a,t(e.projectedCorpus),"donut"===s.donut,{progress:1});m("legendDonut")&&(m("legendDonut").innerHTML=i),j(n,function(r){O(n,a,t(e.projectedCorpus),"donut"===s.donut,{progress:r})})}}(e)}function D(e){var t=m("chartSpouse");t&&(m("legendSpouse")&&(m("legendSpouse").innerHTML='<span><i style="background:#7c5cff"></i>Household before</span><span><i style="background:#ff9f45"></i>Spouse income after</span>'),j(t,function(n){if("bar"===s.spouse)N(t,e.spouse.rows.map(function(e){return e.deathAge}),e.spouse.rows.map(function(e){return e.spouseIncome}),"#ff9f45",{progress:n});else{var r=e.spouse.rows.map(function(e){return{label:e.deathAge,vals:[e.household,e.spouseIncome]}});!function(e,t,n,r,a){a=a||{};var i=L(e);if(i&&i.ok){var o=null==a.progress?1:a.progress,s=i.ctx,u=i.w,l=i.h,c=38,p=[];t.forEach(function(e){e.vals.forEach(function(e){p.push(isFinite(e)?e:0)})});var d=1.15*Math.max.apply(null,p);d>0||(d=1),q(s,u,l,c),E(s,u,l,c,d);var f=Math.max(1,(u-6-c)/t.length),h=Math.max(1,.7*f/n.length);t.forEach(function(e,t){e.vals.forEach(function(e,n){e=isFinite(e)?e:0;var a=Math.max(0,e/d*(l-c-8)*o),i=c+f*t+.15*f+h*n,u=l-c-a;s.fillStyle=r[n],a>0&&s.fillRect(i,u,.9*h,a)}),s.fillStyle=I.txt,s.font="9px Segoe UI",s.fillText(e.label,c+f*t+.2*f,l-c+12)}),e.__hit={type:"group",groups:t,pad:c,gw:f,ht:l}}}(t,r,["H","S"],["#7c5cff","#ff9f45"],{progress:n})}}))}function W(e){_("mc","chartMC",["P10","P25","Median","P75","P90"],[e.p10,e.p25,e.median,e.p75,e.p90],["#ef4444","#ff9f45","#7c5cff","#34d399","#22c55e"])}function G(){var t,n,r;V&&(U(V),D(V),n=(t=V).health.rows.map(function(e){return e.cost}),_("health","chartHealth",t.health.rows.map(function(e){return e.age}),n,"#ff6ec7"),m("legendHealth")&&(m("legendHealth").innerHTML='<span><i style="background:#ff6ec7"></i>Annual healthcare cost @ '+o.infHealthcare+"% inflation</span>"),C&&_("scncompare","chartScnCompare",(r=C).map(function(e){return e.name}),r.map(function(e){return e.res.r.fundingRatio}),r.map(function(e){return h(e.res.r.fundingRatio).color}),{pct:!0}),function(t,n){var r=t.map(function(t){return e.inflationAdjustedPension(o.targetToday,t/100,n.yrs)});_("inflation","chartInflation",t.map(function(e){return e+"%"}),r,"#ff9f45"),m("legendInflation")&&(m("legendInflation").innerHTML='<span><i style="background:#ff9f45"></i>₹'+o.targetToday/1e3+"k today → nominal @ retirement</span>")}(M,V),window.__lastMC&&W(window.__lastMC))}var V=null;function Y(){var n=c(o);document.querySelectorAll(".field").forEach(function(e){var t=e.getAttribute("data-fk");e.classList.toggle("invalid",!!n.invalid[t])}),m("validationMsgs").innerHTML=n.msgs.length?'<div class="warnbox">'+n.msgs.map(function(e){return"⚠ "+e}).join("<br>")+"</div>":"";try{var a=d(o);V=a,window.__lastR=a,w(a),function(e){m("accTable").innerHTML=k(["Age","Year","Monthly SIP","Annual contrib","Cumulative","Equity","Debt+Hybrid","PPF","NPS","Total corpus","Target corpus","Funding %"],e.accRows.map(function(e){return[e.age,e.year,t(e.sip),t(e.annualContrib),t(e.cumContrib),t(e.equity),t(e.debt),t(e.ppf),t(e.nps),{h:t(e.total),cls:"mono"},t(e.targetCorpus),{h:e.funding.toFixed(0)+"%",cls:g(e.funding)}]})),m("depTable").innerHTML=k(["Age","Opening corpus","Investment return","Annual withdrawal","Real withdrawal","Closing corpus","Status"],e.dep.rows.map(function(e){var n=e.closing<=0?'<span class="tag r">Depleted</span>':'<span class="tag g">OK</span>';return[e.age,t(e.opening),t(e.ret),t(e.withdrawal),t(e.realWithdrawal),{h:t(e.closing),cls:e.closing<=0?"cell-r":""},{h:n}]}))}(a),function(e){var n=c(o);m("allocWarn").innerHTML=n.allocOff?'<div class="warnbox">⚠ Allocation totals <b>'+n.alloc.toFixed(0)+"%</b>. Click “Normalize to 100%”.</div>":'<div class="disclaim nowarn">✓ Allocation totals 100%.</div>';var a=r.map(function(n){var r=+o[n.key]||0,a=e.effSip*r/100;return['<span style="color:'+n.color+'">■</span> '+n.label,r.toFixed(0)+"%",t(a),t(e.byBucket[n.key]||0)]});a.push([{h:"<b>Total</b>"},{h:"<b>"+n.alloc.toFixed(0)+"%</b>"},{h:"<b>"+t(e.effSip)+"</b>"},{h:"<b>"+t(e.projectedCorpus)+"</b>"}]),m("allocTable").innerHTML=k(["Bucket","Allocation","₹ / month","Projected corpus"],a)}(a),function(){var e=m("presetButtons");e.innerHTML="",x.forEach(function(t){var n=v("button",null,t.name);n.addEventListener("click",function(){Object.assign(o,t.patch),b(),Y()}),e.appendChild(n)});var n=x.map(function(e){return{name:e.name,res:(t=e.patch,n=Object.assign({},o,t),{s:n,r:d(n)})};var t,n});C=n;var r=n.map(function(e){var n=e.res.r,r=h(n.fundingRatio);return[e.name,t(n.projectedCorpus),t(n.requiredCorpus),{h:n.fundingRatio.toFixed(0)+"%",cls:g(n.fundingRatio)},t(n.projRealPension)+"/mo",t(Math.max(0,n.shortfall)),{h:'<span class="tag '+r.cls.replace("s-","").charAt(0)+'">'+r.tag+"</span>"}]});m("scenarioTable").innerHTML=k(["Scenario","Projected corpus","Required corpus","Funding %","Real pension","Shortfall","Status"],r)}(),function(n){var r=[4,5,6,7,8],a=["Return ↓ / Inflation →"].concat(r.map(function(e){return e+"%"})),i=[8,9,10,11,12,13,14,15].map(function(e){var n=["<b>"+e+"%</b>"];return r.forEach(function(r){var a=d(Object.assign({},o,{infGeneral:r,useBasket:!1,rEquity:e,rIndex:e-1,rFlexi:e-.5,rHybrid:e-3,rDebt:Math.max(4,e-6),rNps:e-3})),i=a.projRealPension/o.targetToday*100;n.push({h:t(a.projRealPension),cls:g(i)})}),n});m("sensTable").innerHTML=k(a,i);var s=[4,5,6,7,8,9,10];M=s;var u=s.map(function(r){var a=e.inflationAdjustedPension(o.targetToday,r/100,n.yrs);return[r+"%",t(o.targetToday)+"/mo",{h:t(a)+"/mo",cls:"mono"},t(12*a/(o.withdrawalRate/100))]});m("inflTable").innerHTML=k(["Inflation","Today's need","@ retirement","Required corpus"],u)}(a),function(n){function a(a,i,s){var u=e.sipFinalYearAmount(i,n.yrs,s/100),l=e.sipTotalContributions(i,n.yrs,s/100),c=r.map(function(e){return{key:e.key,alloc:(+o[e.key]||0)/100,return:(+o[e.ret]||0)/100}}),p=e.buildCorpusByBucket(i+(+o.employerContrib||0),n.yrs,s/100,o.existingCorpus,o.annualLump,o.oneTime,c).total;return[a,t(i)+"/mo",t(u)+"/mo",t(l),t(p),t(n.requiredCorpus),{h:e.fundingRatio(p,n.requiredCorpus).toFixed(0)+"%",cls:g(e.fundingRatio(p,n.requiredCorpus))}]}m("reqSipTable").innerHTML=k(["Step-up mode","Required starting SIP","Final-year SIP","Total contributions","Projected corpus","Target corpus","Funding"],[a("Flat (0%)",n.reqSipFlat,0),a("5% step-up",n.reqSip5,5),a("10% step-up",n.reqSip10,10),a("Your step-up ("+o.stepUp+"%)",n.reqSipCust,o.stepUp)]);var i=n.reqReturn>.15,s=[{l:"Pension achievable with your SIP",v:t(n.achievableRealPension)+"/mo",s:"in today's value",c:"accent"},{l:"SIP needed for your goal",v:t(n.reqSipCust)+"/mo",s:"at your step-up",c:"accent"},{l:"Retirement age needed",v:(isFinite(n.reqRetAge)?n.reqRetAge.toFixed(1):">80")+" yrs",s:"to fully fund",c:"accent"},{l:"Step-up % needed",v:isFinite(n.reqStepUp)?n.reqStepUp.toFixed(1)+"%":"not enough",s:"at age "+o.retirementAge,c:"accent"},{l:"Return needed with current SIP",v:isFinite(n.reqReturn)?(100*n.reqReturn).toFixed(1)+"%":">100%",s:i?"⚠ likely unrealistic":"plausible",c:i?"bad":"good"}],u=m("reverseCards");u.innerHTML="",s.forEach(function(e){var t=v("div",{class:"kpi "+(e.c||"")});t.innerHTML='<div class="k-label">'+e.l+'</div><div class="k-val">'+e.v+'</div><div class="k-sub">'+e.s+"</div>",u.appendChild(t)})}(a),function(e){var n=12*e.swpMonthly,r=12*e.annuityMonthly,a=n*(1-o.taxFreeShare/100),i=a*o.taxRateGains/100,s=r*o.taxRateAnnuity/100,u=n+r,l=i+s,c=u-l;m("taxTable").innerHTML=k(["Income source","Gross / yr","Taxable portion","Est. tax / yr","Net / yr","Net / month"],[["SWP withdrawals",t(n),t(a),t(i),t(n-i),t((n-i)/12)],["Annuity income",t(r),t(r),t(s),t(r-s),t((r-s)/12)],[{h:"<b>Total</b>"},{h:"<b>"+t(u)+"</b>"},{h:"<b>"+t(a+r)+"</b>"},{h:"<b>"+t(l)+"</b>"},{h:"<b>"+t(c)+"</b>"},{h:"<b>"+t(c/12)+"</b>"}]])}(a),function(e){var n=e.spouse.rows.map(function(e){var n=e.ratio>=100?"cell-g":e.ratio>=80?"cell-y":e.ratio>=60?"cell-o":"cell-r";return[e.deathAge,e.spouseAge,t(e.remaining),t(e.swp)+"/mo",t(e.annuity)+"/mo",t(e.spouseIncome)+"/mo",t(e.household)+"/mo",{h:e.ratio.toFixed(0)+"%",cls:n},t(e.legacy)]});m("spouseTable").innerHTML=k(["Primary death age","Spouse age","Remaining corpus","SWP to spouse","Joint annuity","Spouse income","Household before","Survivor ratio","Legacy"],n)}(a),function(e){var n=e.health.rows.map(function(e){return[e.age,t(e.cost),t(e.coverage),t(e.oop),{h:e.absorbable?'<span class="tag g">Absorbable</span>':'<span class="tag r">Strain</span>'}]});m("healthTable").innerHTML=k(["Age","Annual healthcare cost","Insurance cover","Est. out-of-pocket","Retirement income impact"],n);var r=e.health.rows.some(function(e){return!e.absorbable});m("healthVerdict").innerHTML=r?'<div class="warnbox">⚠ At higher ages, routine out-of-pocket healthcare may exceed 25% of pension. Consider raising the reserve or super top-up.</div>':'<div class="disclaim nowarn">✓ Projected income can absorb routine healthcare costs under these assumptions.</div>'}(a),function(n){var r=[],a=n.fundingRatio;function i(e,t,n){r.push({ic:e,cls:t,txt:n})}if(a>=100)i("✅","ok","Your plan is mathematically funded ("+a.toFixed(0)+"%). Maintain discipline and review yearly.");else{i("📈","crit","Funding gap of "+t(Math.max(0,n.shortfall))+" ("+a.toFixed(0)+"% funded). Increase SIP toward "+t(n.reqSipCust)+"/mo (currently "+t(o.sip)+")."),o.stepUp<10&&isFinite(n.reqStepUp)&&i("⬆️","crit","Raise annual step-up to about "+n.reqStepUp.toFixed(0)+"% to close the gap."),a<75&&i("⏳","crit","Delaying retirement to age "+(isFinite(n.reqRetAge)?Math.ceil(n.reqRetAge):"65+")+" would fully fund the goal."),a<50&&i("🎯","crit","If SIP cannot rise, consider trimming the target below ₹"+(o.targetToday/1e3).toFixed(0)+"k/mo, or add a lump sum.");var s=(+o.aEquity||0)+(+o.aIndex||0)+(+o.aFlexi||0);s<50&&n.yrs>10&&i("📊","crit","With "+n.yrs+" years to go, equity is "+s+"%. If risk tolerance permits, higher equity historically improves long-horizon corpus.")}n.health.reserveAdequate||i("🏥","crit","Healthcare reserve looks light versus "+o.infHealthcare+"% medical inflation. Consider increasing it or the super top-up.");var u=Math.min.apply(null,n.spouse.rows.map(function(e){return e.ratio}));u<80&&i("👫","crit","Spouse survivor income can drop to "+u.toFixed(0)+"% of household income. Increase joint-life annuity allocation (now "+o.aAnnuity+"%)."),o.withdrawalRate>6&&i("⚠️","crit","Withdrawal rate of "+o.withdrawalRate+"% is aggressive and may not be sustainable."),n.reqReturn>.15&&i("🚩","crit","Reaching the goal with the current SIP would need ~"+(100*n.reqReturn).toFixed(0)+"% returns — unrealistic. Increase savings instead."),0===r.length&&i("✅","ok","No material issues detected under current assumptions.");var l=m("recList");l.innerHTML="",r.forEach(function(e){var t=v("div",{class:"rec "+e.cls});t.innerHTML='<div class="ic">'+e.ic+"</div><div>"+e.txt+"</div>",l.appendChild(t)});var c=[o.currentAge,o.currentAge+5,o.currentAge+10,o.currentAge+15,o.retirementAge].filter(function(e){return e<=o.retirementAge}).map(function(r){var a=r-o.currentAge,i=n.accRows.find(function(e){return e.age===r})||n.accRows[n.accRows.length-1],s=e.inflationAdjustedPension(o.targetToday,n.effInf,a);return[r,o.spouseAge+a,t(i.total),t(i.targetCorpus),{h:i.funding.toFixed(0)+"%",cls:g(i.funding)},t(s)+"/mo"]});m("milestoneTable").innerHTML=k(["Your age","Spouse age","Projected corpus","Target corpus","Funding %","Pension need @ age"],c)}(a),G()}catch(e){console.error(e),m("validationMsgs").innerHTML='<div class="warnbox">Calculation error: '+e.message+"</div>"}}var J="rp_scenarios_v2";function K(){try{return JSON.parse(localStorage.getItem(J))||{}}catch(e){return{}}}function z(e){try{localStorage.setItem(J,JSON.stringify(e))}catch(e){}}function X(){var e=K(),t=m("scenarioSelect");t.innerHTML="",t.appendChild(v("option",{value:""},"— saved scenarios —")),Object.keys(e).forEach(function(e){t.appendChild(v("option",{value:e},e))})}function Q(){var e=prompt("Scenario name:","My plan "+(Object.keys(K()).length+1));if(e){var t=K();Object.keys(t).length>=3&&!t[e]&&!confirm("You have "+Object.keys(t).length+" scenarios (soft limit 3). Save anyway?")||(t[e]=JSON.parse(JSON.stringify(o)),z(t),X(),alert('Saved "'+e+'".'))}}function Z(){var e=m("scenarioSelect").value;if(e){var t=K();t[e]&&(o=Object.assign({},i,t[e]),b(),Y())}else alert("Pick a saved scenario first.")}function $(){var e=prompt("Duplicate as:",m("scenarioSelect").value+" copy");if(e){var t=K();t[e]=JSON.parse(JSON.stringify(o)),z(t),X()}}function ee(){var e=m("scenarioSelect").value;if(e){var t=K();delete t[e],z(t),X()}}function te(e,t,n){var r=new Blob([t],{type:n||"text/plain"}),a=URL.createObjectURL(r),i=document.createElement("a");i.href=a,i.download=e,document.body.appendChild(i),i.click(),setTimeout(function(){document.body.removeChild(i),URL.revokeObjectURL(a)},100)}function ne(){var e=V||d(o),t=["Age,Year,MonthlySIP,AnnualContribution,CumulativeContribution,EquityCorpus,DebtCorpus,PPFCorpus,NPSCorpus,TotalCorpus,TargetCorpus,FundingPct"];e.accRows.forEach(function(e){t.push([e.age,e.year,Math.round(e.sip),Math.round(e.annualContrib),Math.round(e.cumContrib),Math.round(e.equity),Math.round(e.debt),Math.round(e.ppf),Math.round(e.nps),Math.round(e.total),Math.round(e.targetCorpus),e.funding.toFixed(1)].join(","))}),t.push(""),t.push("PostRetirement Age,Opening,Return,Withdrawal,RealWithdrawal,Closing"),e.dep.rows.forEach(function(e){t.push([e.age,Math.round(e.opening),Math.round(e.ret),Math.round(e.withdrawal),Math.round(e.realWithdrawal),Math.round(e.closing)].join(","))}),te("retirement-projection.csv",t.join("\n"),"text/csv")}function re(){var e=V||d(o);te("retirement-scenario-summary.csv",[["Metric","Value"],["Years to retirement",e.yrs],["Effective inflation %",(100*e.effInf).toFixed(2)],["Future pension target/mo",Math.round(e.futureTargetMonthly)],["Required corpus",Math.round(e.requiredCorpus)],["Projected corpus",Math.round(e.projectedCorpus)],["Funding %",e.fundingRatio.toFixed(1)],["Shortfall",Math.round(e.shortfall)],["Projected nominal pension/mo",Math.round(e.projNominalPension)],["Projected real pension/mo",Math.round(e.projRealPension)],["Required SIP (your step-up)/mo",Math.round(e.reqSipCust)],["Total contributions",Math.round(e.totalContrib)],["Investment growth",Math.round(e.investmentGrowth)]].map(function(e){return e.join(",")}).join("\n"),"text/csv")}function ae(){te("retirement-assumptions.json",JSON.stringify(o,null,2),"application/json")}function ie(){var t=[],n=0,r=0,a=0;function o(e,i,o,s,u){var l=!!i;l?n++:u?a++:r++,t.push({name:e,status:l?"PASS":u?"WARN":"FAIL",exp:o,act:s})}function s(e,t,n){return Math.abs(e-t)<=(void 0===n?1e-6:n)}o("yearsToRetirement",20===e.yearsToRetirement(40,60),20,e.yearsToRetirement(40,60)),o("inflation FV",s(e.inflationAdjustedPension(15e4,.06,20),15e4*Math.pow(1.06,20),.001),"—","—"),o("required corpus",s(e.requiredCorpus(12e5,.05),24e6),24e6,e.requiredCorpus(12e5,.05)),o("withdrawal income",s(e.monthlyIncomeFromCorpus(24e6,.05),1e5),1e5,e.monthlyIncomeFromCorpus(24e6,.05)),o("real income",s(e.realMonthlyIncome(1e5,.06,20),1e5/Math.pow(1.06,20),1e-6),"—","—"),o("annuity income",s(e.annuityMonthlyIncome(1e7,.063),52500,1e-6),"—","—"),o("healthcare FV",s(e.healthcareFutureCost(2e5,.12,20),2e5*Math.pow(1.12,20),.001),"—","—"),o("funding ratio",s(e.fundingRatio(50,100),50),50,e.fundingRatio(50,100)),o("shortfall",40===e.shortfall(100,60),40,e.shortfall(100,60)),o("spouse age",55===e.spouseAgeAt(35,20),55,e.spouseAgeAt(35,20));var u=e.sipFutureValue(2e4,.12,20,0);o("flat SIP FV range",u>17e6&&u<22e6,"1.7-2.2Cr",e.formatCr(u)),o("stepup>flat",e.sipFutureValue(2e4,.12,20,.1)>u,">flat","ok"),o("required SIP solver recovers 20k",s(e.requiredSip(u,0,0,.12,20,0),2e4,10),2e4,Math.round(e.requiredSip(u,0,0,.12,20,0))),o("required return solver ~12%",s(e.requiredReturn(u,2e4,0,0,20,0),.12,.005),.12,e.requiredReturn(u,2e4,0,0,20,0).toFixed(4));var l=e.buildCorpusByBucket(2e4,20,0,0,0,0,[{key:"e",alloc:.6,return:.12},{key:"d",alloc:.4,return:.07}]);o("bucket sum=total",s(l.byBucket.e+l.byBucket.d,l.total,1),"—","—");var c,p,f,h=e.monteCarlo({monthlySip:2e4,years:20,stepUp:.1,existingCorpus:0,expReturn:.12,retVol:.15,inflation:.06,infVol:.02,sims:500,seed:7,targetCorpus:2e7}),g=e.monteCarlo({monthlySip:2e4,years:20,stepUp:.1,existingCorpus:0,expReturn:.12,retVol:.15,inflation:.06,infVol:.02,sims:500,seed:7,targetCorpus:2e7});function v(e,t,n,r){var a=d(Object.assign({},i)),s=Object.assign({},i);s[e]=t;var u=d(s),l=n(a),c=n(u),p=Math.abs(l-c)>1e-6;o("Linkage: "+e,p===r,r?"change":"stable",p?"changed":"same");var f=d(Object.assign({},i));o("Restore: "+e,Math.abs(n(f)-l)<1e-6,l.toFixed(2),n(f).toFixed(2))}function y(e,t,n,r,a,s){var u=d(Object.assign({},i,b(t,n))),l=d(Object.assign({},i,b(t,r))),c=s>0?a(l)>a(u):a(l)<a(u);o("Sanity: "+e,c,s>0?"higher":"lower",c?"correct":"VIOLATED")}function b(e,t){var n={};return n[e]=t,n}o("MC deterministic (seed)",h.median===g.median&&h.successProb===g.successProb,"equal","equal"),o("MC percentiles ordered",h.p10<=h.median&&h.median<=h.p90,"ordered","ok"),o("format INR","₹1,50,000"===e.formatINR(15e4),"₹1,50,000",e.formatINR(15e4)),o("format Cr","₹3.55 Cr"===e.formatCr(355e5),"₹3.55 Cr",e.formatCr(355e5)),v("currentAge",45,function(e){return e.yrs},!0),v("retirementAge",65,function(e){return e.projectedCorpus},!0),v("sip",3e4,function(e){return e.projectedCorpus},!0),v("sip",3e4,function(e){return e.fundingRatio},!0),v("stepUp",5,function(e){return e.projectedCorpus},!0),v("infGeneral",8,function(e){return e.requiredCorpus},!0),v("infGeneral",8,function(e){return e.futureTargetMonthly},!0),v("withdrawalRate",4,function(e){return e.requiredCorpus},!0),v("rEquity",15,function(e){return e.projectedCorpus},!0),v("existingCorpus",1e6,function(e){return e.projectedCorpus},!0),v("spouseAge",40,function(e){return e.spouse.rows[0].spouseAge},!0),v("targetToday",2e5,function(e){return e.requiredCorpus},!0),v("infHealthcare",16,function(e){return e.health.rows[5].cost},!0),v("rAnnuity",8,function(e){return e.annuityMonthly},!0),v("lifeExp",102,function(e){return e.dep.rows.length},!0),v("city","Delhi",function(e){return e.projectedCorpus},!1),y("higher SIP→corpus","sip",2e4,4e4,function(e){return e.projectedCorpus},1),y("higher return→corpus","rEquity",10,16,function(e){return e.projectedCorpus},1),y("higher inflation→reqPension","infGeneral",5,9,function(e){return e.futureTargetMonthly},1),y("higher inflation→reqCorpus","infGeneral",5,9,function(e){return e.requiredCorpus},1),y("later retire→corpus","retirementAge",58,66,function(e){return e.projectedCorpus},1),y("higher withdrawal→reqCorpus down","withdrawalRate",4,6,function(e){return e.requiredCorpus},-1),y("higher step-up→corpus","stepUp",0,12,function(e){return e.projectedCorpus},1),y("higher hc inflation→cost","infHealthcare",10,16,function(e){return e.health.rows[8].cost},1),y("higher annuity rate→income","rAnnuity",5,8,function(e){return e.annuityMonthly},1),o("Boundary: SIP=0 finite≥0",(c=d(Object.assign({},i,{sip:0})),isFinite(c.projectedCorpus)&&c.projectedCorpus>=0),"finite≥0","ok"),o("Boundary: retire 75 finite",function(){var e=d(Object.assign({},i,{retirementAge:75,lifeExp:95}));return isFinite(e.projectedCorpus)}(),"finite","ok"),o("Boundary: inflation 0 = target",s(d(Object.assign({},i,{infGeneral:0,useBasket:!1})).futureTargetMonthly,i.targetToday,1),"=target","ok"),o("Boundary: withdrawal 1% bigger reqCorpus",d(Object.assign({},i,{withdrawalRate:1})).requiredCorpus>d(i).requiredCorpus,"bigger","ok"),o("No NaN in key outputs",function(){var e=d(i);return[e.projectedCorpus,e.requiredCorpus,e.fundingRatio,e.projRealPension].every(isFinite)}(),"all finite","ok"),o("setupCanvas floors width (hidden tab)",(p=L(oe("150",0)))&&p.w>=S&&p.h>=R,"w≥"+S,"ok"),o("pieOrDonut no negative radius (collapsed)",function(){try{return O(oe("190",0),[{label:"x",v:100,color:"#fff"}],"C",!0,{progress:.5}),!0}catch(e){return!1}}(),"no throw","ok"),o("height stable on re-render",function(){var e=oe("150",600);L(e);var t=e.height;return L(e),t===e.height}(),"stable","ok"),o("barChart all-zero ok",function(){try{return N(oe("150",600),["a","b"],[0,0],"#fff",{progress:.3}),!0}catch(e){return!1}}(),"no throw","ok"),o("lineChart NaN/Infinity ok",function(){try{return H(oe("150",600),[{data:[NaN,1/0,5],color:"#fff",name:""}],{progress:.4}),!0}catch(e){return!1}}(),"no throw","ok"),o("anim progress 0 draws (no throw)",function(){try{return N(oe("150",600),["a"],[100],"#fff",{progress:0}),!0}catch(e){return!1}}(),"no throw","ok"),o("anim progress 1 = final frame",(N(f=oe("150",600),["a","b"],[100,50],"#fff",{progress:1}),!!f.__hit&&100===f.__hit.values[0]),"final","ok"),o("easeOutCubic bounds",0===P(0)&&Math.abs(P(1)-1)<1e-9,"0..1","ok"),o("single-frame renderer duration",1===A,1,A),o("anim early frame < final frame",(N(oe("150",600),["x"],[100],"#fff",{progress:.1}),N(oe("150",600),["x"],[100],"#fff",{progress:1}),!0),"grows","ok");var w=d(Object.assign({},i,{currentAge:40,retirementAge:60,spouseAge:35,targetToday:15e4,sip:2e4,stepUp:10,infGeneral:6,rEquity:13,withdrawalRate:5,useBasket:!1}));return o("Regression yrs=20",20===w.yrs,20,w.yrs),o("Regression target≈481k",s(w.futureTargetMonthly,15e4*Math.pow(1.06,20),50),"~481k",Math.round(w.futureTargetMonthly)),o("Regression funding 20-45%",w.fundingRatio>20&&w.fundingRatio<45,"20-45%",w.fundingRatio.toFixed(1)+"%"),o("Regression corpus>0",w.projectedCorpus>0,">0",e.formatCr(w.projectedCorpus)),m("diagSummary").innerHTML='<div class="diag-pill t">Total: '+t.length+'</div><div class="diag-pill p">Passed: '+n+'</div><div class="diag-pill f">Failed: '+r+'</div><div class="diag-pill w">Warnings: '+a+"</div>",m("diagTable").innerHTML=k(["Test","Status","Expected","Actual"],t.map(function(e){var t="PASS"===e.status?"cell-g":"WARN"===e.status?"cell-y":"cell-r";return[e.name,{h:e.status,cls:t},String(e.exp),String(e.act)]})),window.__testResult={total:t.length,pass:n,fail:r,warn:a},window.__testResult}function oe(e,t){return{getContext:()=>({setTransform(){},clearRect(){},beginPath(){},moveTo(){},lineTo(){},closePath(){},fill(){},stroke(){},save(){},restore(){},translate(){},fillText(){},createLinearGradient:()=>({addColorStop(){}}),arc(e,t,n){if(n<0)throw new Error("neg radius")},fillRect(e,t,n,r){if(n<0||r<0)throw new Error("neg rect")},set fillStyle(e){},set strokeStyle(e){},set lineWidth(e){},set font(e){},set globalAlpha(e){},set globalCompositeOperation(e){},set textAlign(e){}}),getBoundingClientRect:()=>({width:t}),parentElement:{clientWidth:t?t+20:0},getAttribute:t=>"height"===t?e:"width"===t?"240":null,style:{},width:0,height:0,__hit:null}}var se=[["projection","📈 Projection"],["portfolio","🥧 Portfolio"],["scenarios","🔀 Scenarios"],["sensitivity","🌡 Sensitivity"],["montecarlo","🎲 Monte Carlo"],["spouse","👫 Spouse"],["healthcare","🏥 Healthcare"],["reverse","🔁 Required/Reverse"],["tax","🧾 Tax"],["action","✅ Action Plan"],["method","📚 Methodology"],["diag","🧪 Diagnostics"]];var ue=m("tooltip"),le=!1;function ce(e,t,n){if(ue){ue.innerHTML=e,ue.classList.add("show");var r=ue.offsetWidth,a=ue.offsetHeight,i=t+14,o=n+14;i+r>window.innerWidth-8&&(i=t-r-14),i<8&&(i=8),o+a>window.innerHeight-8&&(o=n-a-14),o<8&&(o=8),ue.style.left=i+"px",ue.style.top=o+"px"}}function pe(){ue&&!le&&ue.classList.remove("show")}function de(){document.body;document.addEventListener("contextmenu",function(e){return e.preventDefault(),!1}),document.addEventListener("dragstart",function(e){return e.preventDefault(),!1}),document.addEventListener("copy",function(e){fe(e.target)||e.preventDefault()}),document.addEventListener("cut",function(e){fe(e.target)||e.preventDefault()}),document.addEventListener("keydown",function(e){var t=e.key||"",n=t.toUpperCase();if("F12"===t)return e.preventDefault(),!1;if(e.ctrlKey&&e.shiftKey&&("I"===n||"J"===n||"C"===n))return e.preventDefault(),!1;if(e.ctrlKey&&("U"===n||"S"===n||"P"===n))return e.preventDefault(),!1;if(e.metaKey&&e.altKey&&("I"===n||"J"===n||"C"===n))return e.preventDefault(),!1;if("PrintScreen"===t){!function(e){var t=ge();if(!t)return;var n=m("shieldMsg");n&&(n.textContent=e);t.classList.add("on"),setTimeout(function(){!document.hidden&&document.hasFocus&&document.hasFocus()&&t.classList.remove("on")},1200)}("Screenshots are disabled for this document.");try{navigator.clipboard&&navigator.clipboard.writeText("")}catch(e){}}}),window.addEventListener("blur",function(){me()}),window.addEventListener("focus",function(){ve()}),document.addEventListener("visibilitychange",function(){document.hidden?me():ve()});setInterval(function(){var e=window.outerWidth-window.innerWidth,t=window.outerHeight-window.innerHeight;e>170||t>170?document.body.classList.add("devtools-warn"):document.body.classList.remove("devtools-warn")},1200)}function fe(e){if(!e)return!1;var t=(e.tagName||"").toUpperCase();return"INPUT"===t||"TEXTAREA"===t||e.isContentEditable}document.addEventListener("mouseover",function(e){var t=e.target.closest?e.target.closest("[data-tip]"):null;t&&(le=!1,ce(t.getAttribute("data-tip"),e.clientX,e.clientY))}),document.addEventListener("mousemove",function(e){if(ue&&ue.classList.contains("show")&&!le){var t=e.target.closest?e.target.closest("[data-tip]"):null;t&&ce(t.getAttribute("data-tip"),e.clientX,e.clientY)}}),document.addEventListener("mouseout",function(e){e.target.closest&&e.target.closest("[data-tip]")&&pe()}),document.addEventListener("click",function(e){var t=e.target.closest?e.target.closest(".help[data-tip]"):null;if(t){e.stopPropagation(),le=!0;var n=t.getBoundingClientRect();ce(t.getAttribute("data-tip"),n.right,n.top)}else le=!1,ue&&ue.classList.remove("show")}),document.addEventListener("focusin",function(e){var t=e.target.closest?e.target.closest("[data-tip]"):null;if(t){var n=t.getBoundingClientRect();ce(t.getAttribute("data-tip"),n.right,n.top)}}),document.addEventListener("focusout",function(){pe()});var he=null;function ge(){return he||(he=m("shield"))}function me(){var e=ge();if(e){e.classList.add("on");var t=m("shieldMsg");t&&(t.textContent="Content hidden while the window is not focused (screenshot / screen-recording deterrent).")}}function ve(){var e=ge();e&&e.classList.remove("on")}function ye(){var n,a,c;n=function(){var n,a;y(),(a=m("tabbar")).innerHTML="",se.forEach(function(e,t){var n=v("button",null,e[1]);0===t&&(n.className="on"),n.addEventListener("click",function(){document.querySelectorAll("#tabbar button").forEach(function(e){e.classList.remove("on")}),n.classList.add("on"),document.querySelectorAll(".tabpane").forEach(function(t){t.classList.toggle("on",t.getAttribute("data-pane")===e[0])}),requestAnimationFrame(function(){G()})}),a.appendChild(n)}),document.querySelectorAll("select[data-chart]").forEach(function(e){var t=e.getAttribute("data-chart"),n=l[t]||["bar"];e.innerHTML="",n.forEach(function(n){var r=v("option",{value:n},u[n][1]);s[t]===n&&(r.selected=!0),e.appendChild(r)}),e.addEventListener("change",function(){s[t]=e.value,G()})}),m("methodBody").innerHTML="<p><b>Years to retirement</b> = retirement age − current age.</p><p><b>SIP future value</b>: monthly compounding at (1+annualReturn)^(1/12)−1. Step-up applies each year; lumps and existing corpus grow at their bucket returns.</p><p><b>Inflation-adjusted target</b> = today's pension × (1+inflation)^years. Weighted basket = Σ(rate×weight)/Σweight.</p><p><b>Required corpus</b> = annual pension ÷ withdrawal rate (+ inflated legacy).</p><p><b>Retirement income</b> = SWP (corpus × rate ÷ 12) + annuity (annuity corpus × annuity rate ÷ 12 × joint-life factor).</p><p><b>Real vs nominal</b>: real = nominal ÷ (1+inflation)^years.</p><p><b>Annuity factors</b> (illustrative): single 100%, joint 92%, joint-100% 86%, joint+ROP 80%, increasing 75%.</p><p><b>Spouse continuation</b>: remaining corpus supplies SWP; joint-life annuity continues (single-life stops). Survivor ratio = spouse income ÷ household income before death.</p><p><b>Monte Carlo</b>: annual returns ~ Normal(μ,σ) via a seeded Mulberry32 RNG (reproducible). Simulations, not guarantees.</p><p><b>Tax</b>: SWP split into tax-free capital and taxable gains; annuity fully taxable. Illustrative only.</p><p><b>Precision</b>: full JS precision internally; rounding is display-only.</p>",m("warnBody").innerHTML="• Historical returns do not guarantee future returns.<br>• Mutual funds are market-linked and can fall.<br>• Annuity rates, PPF rates and tax laws can change.<br>• SWP is not a guaranteed pension — it depends on returns and sequence risk.<br>• Joint-life annuity generally reduces the starting pension.<br>• Inflation, especially healthcare inflation, can materially change requirements.<br>• This is an educational planning simulator, not personalised regulated investment advice.",X(),Y(),["chartCorpus","chartReqVsProj","chartContribGrowth","chartIncomeSrc","chartScnCompare","chartInflation","chartSpouse","chartHealth","chartMC"].forEach(function(t){var n=m(t);n&&function(t){t.addEventListener("mousemove",function(n){var r=t.__hit;if(r){var a=t.getBoundingClientRect(),i=n.clientX-a.left,o="";if("line"===r.type){var s=Math.round((i-r.pad)/((r.w-6-r.pad)/(r.n-1||1)));s=Math.max(0,Math.min(r.n-1,s)),o=(r.labels?"Age "+r.labels[s]+": ":"")+r.series.map(function(t){return(t.name?t.name+" ":"")+e.formatCr(t.data[s])}).join(" · ")}else if("bar"===r.type){var u=Math.floor((i-r.pad)/r.gap);u>=0&&u<r.values.length&&(o=r.labels[u]+": "+(r.pct?r.values[u].toFixed(1)+"%":e.formatCr(r.values[u])))}else if("group"===r.type){var l=Math.floor((i-r.pad)/r.gw);if(l>=0&&l<r.groups.length){var c=r.groups[l];o="Death "+c.label+": H "+e.formatCr(c.vals[0])+" · S "+e.formatCr(c.vals[1])}}o?ce(o,n.clientX,n.clientY):pe()}}),t.addEventListener("mouseleave",pe)}(n)}),m("btnReset").addEventListener("click",function(){confirm("Reset all inputs to defaults?")&&(o=JSON.parse(JSON.stringify(i)),b(),Y())}),m("btnSave").addEventListener("click",Q),m("btnLoadScn").addEventListener("click",Z),m("btnDupScn").addEventListener("click",$),m("btnDelScn").addEventListener("click",ee),m("btnCsvProj").addEventListener("click",ne),m("btnCsvScn").addEventListener("click",re),m("btnJson").addEventListener("click",ae),m("btnImport").addEventListener("click",function(){m("fileImport").click()}),m("fileImport").addEventListener("change",function(e){var t,n;e.target.files[0]&&(t=e.target.files[0],(n=new FileReader).onload=function(){try{var e=JSON.parse(n.result);o=Object.assign({},i,e),b(),Y(),alert("Imported.")}catch(e){alert("Invalid JSON: "+e.message)}},n.readAsText(t))}),m("btnNormalize").addEventListener("click",function(){var e=p(o);e<=0||(r.forEach(function(t){o[t.key]=Math.round((+o[t.key]||0)/e*100)}),o.aEquity+=100-p(o),b(),Y())}),m("btnRunMC").addEventListener("click",function(){var n=V||d(o),r=e.monteCarlo({monthlySip:n.effSip,years:n.yrs,stepUp:o.stepUp/100,existingCorpus:o.existingCorpus+o.oneTime,expReturn:n.blended,retVol:(+m("mcVol").value||15)/100,inflation:n.effInf,infVol:.02,sims:Math.max(100,+m("mcSims").value||1e3),seed:+m("mcSeed").value||12345,targetCorpus:n.requiredCorpus});window.__lastMC=r,m("mcResults").innerHTML='<div class="kpigrid">'+be("Probability of success",r.successProb.toFixed(1)+"%","reaching required corpus",r.successProb>=70?"good":r.successProb>=40?"warn":"bad")+be("Median corpus",t(r.median),"50th percentile","accent")+be("10th percentile",t(r.p10),"pessimistic","bad")+be("25th percentile",t(r.p25),"","accent")+be("75th percentile",t(r.p75),"","accent")+be("90th percentile",t(r.p90),"optimistic","good")+'</div><p class="disclaim">Simulations, not guarantees. Normal(μ='+(100*n.blended).toFixed(1)+"%, σ="+m("mcVol").value+"%), seed "+m("mcSeed").value+" (reproducible).</p>",W(r),w(n)}),m("btnRunTests").addEventListener("click",ie),window.addEventListener("resize",function(){clearTimeout(n),n=setTimeout(function(){G()},160)}),setTimeout(ie,300)},a=m("discModal"),(c=m("appRoot"))&&(c.style.display="none"),m("discAccept").addEventListener("click",function(){var e=m("discCheck");if(!e||e.checked){a.classList.remove("on"),c&&(c.style.display="");try{localStorage.setItem("rp_disc_accepted","1")}catch(e){}n()}else m("discNeedCheck").style.display="block"}),m("discDecline").addEventListener("click",function(){a.innerHTML='<div class="disc-card"><h2>Access not granted</h2><p class="muted">You chose not to accept the terms, so the application will not load. You may close this tab. To use the tool, reload the page and accept the disclaimer.</p></div>'}),a.classList.add("on")}function be(e,t,n,r){return'<div class="kpi '+(r||"")+'"><div class="k-label">'+e+'</div><div class="k-val">'+t+'</div><div class="k-sub">'+(n||"")+"</div></div>"}window.__APP__={runTests:ie,compute:d},"loading"===document.readyState?document.addEventListener("DOMContentLoaded",ye):ye()}();
+</script>
+<script>
+
+</script>
+<script>document.getElementById('yr')&&(document.getElementById('yr').textContent=new Date().getFullYear());</script>
+<script id="stableChartController">
+(function(){'use strict';
+ var observer=null, seen=new WeakMap(), timers=new WeakMap(), reduced=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches), attached=false;
+ function finish(card){if(!card)return;card.classList.remove('visual-pulse');var cv=card.querySelector('canvas');if(cv){cv.style.opacity='1';cv.style.visibility='visible';cv.style.filter='none';cv.style.willChange='auto';}}
+ function pulse(card){if(!card){return;}var old=timers.get(card);if(old){clearTimeout(old);}finish(card);if(reduced){return;}var cv=card.querySelector('canvas');if(cv){cv.style.opacity='1';cv.style.visibility='visible';cv.style.willChange='opacity, filter';}requestAnimationFrame(function(){requestAnimationFrame(function(){card.classList.add('visual-pulse');timers.set(card,setTimeout(function(){finish(card);timers.delete(card);},5050));});});}
+ function attach(){var cards=[].slice.call(document.querySelectorAll('.chartcard'));if(!cards.length||!window.__lastR){return false;}if(observer){observer.disconnect();}
+  if('IntersectionObserver' in window){observer=new IntersectionObserver(function(entries){entries.forEach(function(e){var inside=e.isIntersecting&&e.intersectionRatio>=.18,was=seen.get(e.target)||false;if(inside&&!was){seen.set(e.target,true);pulse(e.target);}else if(!e.isIntersecting||e.intersectionRatio<.02){seen.set(e.target,false);finish(e.target);}});},{threshold:[0,.02,.18,.55],rootMargin:'-2% 0px -2% 0px'});cards.forEach(function(c){observer.observe(c);});}
+  attached=true;return true;}
+ function wait(){var n=0,t=setInterval(function(){n++;if(attach()||n>60){clearInterval(t);}},150);}
+ function activeCardForSelect(sel){return sel&&sel.closest?sel.closest('.chartcard'):null;}
+ document.addEventListener('change',function(e){var sel=e.target&&e.target.matches&&e.target.matches('select[data-chart]')?e.target:null;if(!sel){return;}var card=activeCardForSelect(sel);requestAnimationFrame(function(){var cv=card&&card.querySelector('canvas');if(cv){cv.style.opacity='1';cv.style.visibility='visible';}pulse(card);});},false);
+ document.addEventListener('click',function(e){if(e.target&&e.target.closest&&e.target.closest('#tabbar button')){setTimeout(attach,80);}},false);
+ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',wait);}else{wait();}
+ var accept=document.getElementById('discAccept');if(accept){accept.addEventListener('click',function(){setTimeout(wait,250);});}
+ window.addEventListener('resize',function(){requestAnimationFrame(attach);},{passive:true});
+ window.__stableCharts={ready:function(){return attached;},pulse:pulse,reduced:function(){return reduced;},finish:finish};
+})();
+</script>
+<script id="exhaustiveChartVisualQA">
+(function(){'use strict';
+ function wait(ms){return new Promise(function(r){setTimeout(r,ms);});}
+ function painted(canvas){try{var ctx=canvas.getContext('2d',{willReadFrequently:true});if(!ctx||canvas.width<1||canvas.height<1)return false;var w=canvas.width,h=canvas.height,step=Math.max(1,Math.floor(Math.min(w,h)/18));var d=ctx.getImageData(0,0,w,h).data;for(var y=0;y<h;y+=step){for(var x=0;x<w;x+=step){if(d[(y*w+x)*4+3]>0)return true;}}return false;}catch(e){return false;}}
+ async function run(){var report=[],tabs=[].slice.call(document.querySelectorAll('#tabbar button')),sels=[].slice.call(document.querySelectorAll('select[data-chart]'));var errors=[];function onerr(e){errors.push(String(e.message||e.type));}window.addEventListener('error',onerr);
+  for(var si=0;si<sels.length;si++){var sel=sels[si],card=sel.closest('.chartcard'),pane=sel.closest('.tabpane');if(pane){var name=pane.getAttribute('data-pane'),tab=tabs.find(function(b){return (b.textContent||'').toLowerCase().indexOf(name==='montecarlo'?'monte':name)>-1;});if(tab){tab.click();await wait(50);}}
+   if(sel.getAttribute('data-chart')==='mc'){var rb=document.getElementById('btnRunMC');if(rb){rb.click();await wait(80);}}for(var oi=0;oi<sel.options.length;oi++){sel.selectedIndex=oi;sel.dispatchEvent(new Event('change',{bubbles:true}));await wait(80);var cv=card&&card.querySelector('canvas');report.push({chart:sel.getAttribute('data-chart'),option:sel.value,painted:!!cv&&painted(cv),visible:!!cv&&getComputedStyle(cv).visibility!=='hidden'&&parseFloat(getComputedStyle(cv).opacity)>0,errorCount:errors.length});}}
+  window.removeEventListener('error',onerr);var failed=report.filter(function(x){return !x.painted||!x.visible||x.errorCount;});return {total:report.length,passed:report.length-failed.length,failed:failed.length,details:report,errors:errors};}
+ window.__runExhaustiveChartVisualQA=run;
+})();
+</script>
+
+<div id="printReport"></div>
+<script id="ADMIN_CHART_OVERRIDE">
+/* ============================================================================
+   ADMIN CHART OVERRIDE v2 — self-contained renderer that TAKES OVER all chart
+   canvases. Full repaint every trigger => switching type any number of times
+   can never leave a blank canvas. Donut/Pie replaced with Bar. Clear axes.
+   Exposed as window.__ADMIN_RENDER for testing.
+   ============================================================================ */
+(function () {
+  'use strict';
+  var E = window.RetireEngine || {};
+  var fmt = (typeof E.formatCr === 'function') ? E.formatCr : function (n) { return String(Math.round(n)); };
+  var COL = { grid: '#3a3468', gridF: 'rgba(90,80,150,.35)', txt: '#c9c3ea', ink: '#efeaff' };
+  var BK = (window.__RP__ && window.__RP__.BUCKETS) || [];
+  var PADL = 52, PADB = 26, PADT = 8, PADR = 8;   // generous room for axis labels
+
+  function typeOf(key) {
+    if (key === 'donut') return 'bar';               // Donut/Pie -> Bar
+    var sel = document.querySelector('select[data-chart="' + key + '"]');
+    return sel ? sel.value : 'bar';
+  }
+  function san(a) { return a.map(function (x) { return isFinite(x) ? x : 0; }); }
+  function niceMax(v) { return (v > 0) ? v * 1.14 : 1; }
+
+  function sizeCanvas(cv) {
+    var box = cv.parentElement; if (!box) return null;
+    var cssW = Math.floor(box.clientWidth || 0);
+    var cssH = Math.floor(box.clientHeight || parseInt(cv.getAttribute('height'), 10) || 160);
+    if (cssW < 40 || cssH < 40) return null;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
+    cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
+    var ctx = cv.getContext('2d'); if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+
+  function yAxis(ctx, w, h, max, pct) {
+    ctx.strokeStyle = COL.grid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PADL, PADT); ctx.lineTo(PADL, h - PADB); ctx.lineTo(w - PADR, h - PADB); ctx.stroke();
+    ctx.fillStyle = COL.txt; ctx.font = '10px Segoe UI'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    var plotH = (h - PADB) - PADT;
+    for (var g = 0; g <= 4; g++) {
+      var val = max * g / 4, y = (h - PADB) - plotH * (g / 4);
+      ctx.fillText(pct ? (val.toFixed(0) + '%') : fmt(val), PADL - 5, y);
+      if (g > 0) { ctx.strokeStyle = COL.gridF; ctx.beginPath(); ctx.moveTo(PADL, y); ctx.lineTo(w - PADR, y); ctx.stroke(); }
+    }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+  // X labels: rotate if crowded so nothing overlaps / gets clipped
+  function xLabels(ctx, w, h, positions, labels) {
+    ctx.fillStyle = COL.txt; ctx.font = '10px Segoe UI';
+    var slot = positions.length > 1 ? (positions[1] - positions[0]) : (w - PADL - PADR);
+    var rotate = false;
+    for (var i = 0; i < labels.length; i++) { if (ctx.measureText(String(labels[i])).width > slot - 4) { rotate = true; break; } }
+    for (var j = 0; j < labels.length; j++) {
+      var lb = String(labels[j]); var x = positions[j], y = h - PADB + 4;
+      if (rotate) {
+        ctx.save(); ctx.translate(x, y + 2); ctx.rotate(-Math.PI / 4); ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        if (ctx.measureText(lb).width > (h - (h - PADB)) + PADB + 8) lb = lb.slice(0, 8) + '…';
+        ctx.fillText(lb, 0, 0); ctx.restore();
+      } else {
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText(lb, x, y);
+      }
+    }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  function drawBars(ctx, w, h, labels, values, colors, pct) {
+    values = san(values); if (!values.length) { values = [0]; labels = ['']; }
+    var max = niceMax(Math.max.apply(null, values));
+    yAxis(ctx, w, h, max, pct);
+    var plotW = (w - PADL - PADR), plotH = (h - PADB) - PADT;
+    var gap = plotW / values.length, bw = Math.max(2, gap * 0.6);
+    var pos = [];
+    for (var i = 0; i < values.length; i++) {
+      var cx = PADL + gap * i + gap / 2; pos.push(cx);
+      var bh = Math.max(0, plotH * (values[i] / max));
+      var x = cx - bw / 2, y = (h - PADB) - bh;
+      ctx.fillStyle = Array.isArray(colors) ? colors[i % colors.length] : colors;
+      if (bh > 0) ctx.fillRect(x, y, bw, bh);
+    }
+    xLabels(ctx, w, h, pos, labels);
+  }
+  function drawLine(ctx, w, h, series, xlabels, area) {
+    var all = []; series.forEach(function (s) { s.data = san(s.data); all = all.concat(s.data); });
+    var max = niceMax(Math.max.apply(null, all));
+    yAxis(ctx, w, h, max, false);
+    var n = Math.max(1, series[0].data.length);
+    var plotW = (w - PADL - PADR), plotH = (h - PADB) - PADT;
+    function X(i) { return PADL + plotW * (i / (n - 1 || 1)); }
+    function Y(v) { return (h - PADB) - plotH * (v / max); }
+    series.forEach(function (s) {
+      if (area) {
+        ctx.beginPath();
+        for (var i = 0; i < n; i++) { var x = X(i), y = Y(s.data[i]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+        ctx.lineTo(X(n - 1), h - PADB); ctx.lineTo(X(0), h - PADB); ctx.closePath();
+        ctx.globalAlpha = .15; ctx.fillStyle = s.color; ctx.fill(); ctx.globalAlpha = 1;
+      }
+      ctx.strokeStyle = s.color; ctx.lineWidth = 2.2; ctx.beginPath();
+      for (var j = 0; j < n; j++) { var x2 = X(j), y2 = Y(s.data[j]); j ? ctx.lineTo(x2, y2) : ctx.moveTo(x2, y2); }
+      ctx.stroke();
+    });
+    if (xlabels && xlabels.length) {
+      var step = Math.max(1, Math.ceil(n / 7)), pos = [], lab = [];
+      for (var k = 0; k < n; k += step) { pos.push(X(k)); lab.push(xlabels[k]); }
+      xLabels(ctx, w, h, pos, lab);
+    }
+  }
+  function drawGrouped(ctx, w, h, groups, colors) {
+    var all = []; groups.forEach(function (g) { g.vals.forEach(function (v) { all.push(isFinite(v) ? v : 0); }); });
+    var max = niceMax(Math.max.apply(null, all));
+    yAxis(ctx, w, h, max, false);
+    var plotW = (w - PADL - PADR), plotH = (h - PADB) - PADT;
+    var gw = plotW / groups.length, series = groups[0].vals.length, bw = Math.max(2, gw * 0.72 / series);
+    var pos = [];
+    groups.forEach(function (g, gi) {
+      var base = PADL + gw * gi + gw * 0.14; pos.push(PADL + gw * gi + gw / 2);
+      g.vals.forEach(function (v, si) {
+        v = isFinite(v) ? v : 0; var bh = Math.max(0, plotH * (v / max));
+        var x = base + bw * si, y = (h - PADB) - bh;
+        ctx.fillStyle = colors[si]; if (bh > 0) ctx.fillRect(x, y, bw * 0.92, bh);
+      });
+    });
+    xLabels(ctx, w, h, pos, groups.map(function (g) { return g.label; }));
+  }
+  function legend(id, items) {
+    var el = document.getElementById(id); if (!el) return;
+    el.innerHTML = items.map(function (it) { return '<span><i style="background:' + it.c + '"></i>' + it.t + '</span>'; }).join('');
+  }
+  function num(txt) { var v = parseFloat(String(txt).replace(/[^0-9.\-]/g, '')); return isFinite(v) ? v : 0; }
+
+  function dataFor(key) {
+    var R = window.__lastR; if (!R) return null;
+    switch (key) {
+      case 'corpus': return {
+        series: [{ name: 'Projected', color: '#7c5cff', data: R.accRows.map(function (r) { return r.total; }) },
+                 { name: 'Target', color: '#ff9f45', data: R.accRows.map(function (r) { return r.targetCorpus; }) }],
+        x: R.accRows.map(function (r) { return r.age; }),
+        leg: [{ c: '#7c5cff', t: 'Projected corpus (\u20b9)' }, { c: '#ff9f45', t: 'Target corpus (\u20b9)' }] };
+      case 'reqproj': return { labels: ['Required', 'Projected'], values: [R.requiredCorpus, R.projectedCorpus], colors: ['#ff9f45', '#7c5cff'] };
+      case 'contrib': return {
+        series: [{ name: 'Contributions', color: '#34d399', data: R.accRows.map(function (r) { return r.cumContrib; }) },
+                 { name: 'Total', color: '#7c5cff', data: R.accRows.map(function (r) { return r.total; }) }],
+        x: R.accRows.map(function (r) { return r.age; }),
+        leg: [{ c: '#34d399', t: 'Contributions (\u20b9)' }, { c: '#7c5cff', t: 'Total corpus (\u20b9)' }] };
+      case 'income': return { labels: ['SWP', 'Annuity', 'Target'], values: [R.swpMonthly, R.annuityMonthly, R.futureTargetMonthly], colors: ['#7c5cff', '#ff9f45', '#22d3ee'], leg: [{ c: '#7c5cff', t: 'SWP' }, { c: '#ff9f45', t: 'Annuity' }, { c: '#22d3ee', t: 'Target' }] };
+      case 'donut': {
+        var L = [], V = [], C = [], lg = [];
+        BK.forEach(function (b) { var v = (R.byBucket && R.byBucket[b.key]) || 0; if (v > 0) { L.push(b.label); V.push(v); C.push(b.color); lg.push({ c: b.color, t: b.label }); } });
+        return { labels: L, values: V, colors: C, leg: lg }; }
+      case 'scncompare': {
+        var rows = [].slice.call(document.querySelectorAll('#scenarioTable tbody tr'));
+        var L2 = [], V2 = [], C2 = [];
+        rows.forEach(function (tr) { var td = tr.children; if (td && td.length >= 4) {
+          L2.push((td[0].textContent || '').trim()); var f = num(td[3].textContent); V2.push(f);
+          C2.push(f >= 100 ? '#22c55e' : f >= 75 ? '#eab308' : f >= 50 ? '#ff9f45' : '#ef4444'); } });
+        return { labels: L2, values: V2, colors: C2, pct: true }; }
+      case 'inflation': {
+        var el = document.getElementById('in_targetToday');
+        var t0 = el ? (parseFloat(el.value) || 150000) : 150000;
+        var yrs = R.yrs || 20, arr = [4, 5, 6, 7, 8, 9, 10];
+        return { labels: arr.map(function (i) { return i + '%'; }), values: arr.map(function (i) { return t0 * Math.pow(1 + i / 100, yrs); }), colors: '#ff9f45' }; }
+      case 'mc': {
+        var mc = window.__lastMC;
+        if (!mc) return { labels: ['P10', 'P25', 'Median', 'P75', 'P90'], values: [0, 0, 0, 0, 0], colors: '#7c5cff', empty: true };
+        return { labels: ['P10', 'P25', 'Median', 'P75', 'P90'], values: [mc.p10, mc.p25, mc.median, mc.p75, mc.p90], colors: ['#ef4444', '#ff9f45', '#7c5cff', '#34d399', '#22c55e'] }; }
+      case 'spouse': return {
+        group: R.spouse.rows.map(function (r) { return { label: r.deathAge, vals: [r.household, r.spouseIncome] }; }),
+        single: { labels: R.spouse.rows.map(function (r) { return r.deathAge; }), values: R.spouse.rows.map(function (r) { return r.spouseIncome; }), colors: '#ff9f45' },
+        leg: [{ c: '#7c5cff', t: 'Household before' }, { c: '#ff9f45', t: 'Spouse income after' }] };
+      case 'health': return { labels: R.health.rows.map(function (r) { return r.age; }), values: R.health.rows.map(function (r) { return r.cost; }), colors: '#ff6ec7', leg: [{ c: '#ff6ec7', t: 'Annual healthcare cost (\u20b9)' }] };
+    }
+    return null;
+  }
+
+  var MAP = [
+    ['chartCorpus', 'corpus', 'legendCorpus'], ['chartReqVsProj', 'reqproj', null],
+    ['chartContribGrowth', 'contrib', 'legendContrib'], ['chartIncomeSrc', 'income', 'legendIncome'],
+    ['chartDonut', 'donut', 'legendDonut'], ['chartScnCompare', 'scncompare', null],
+    ['chartInflation', 'inflation', 'legendInflation'], ['chartMC', 'mc', null],
+    ['chartSpouse', 'spouse', 'legendSpouse'], ['chartHealth', 'health', 'legendHealth']
+  ];
+
+  function renderOne(cid, key, legId) {
+    var cv = document.getElementById(cid); if (!cv) return false;
+    if (cv.offsetParent === null) return false;
+    var s = sizeCanvas(cv); if (!s) return false;
+    var d = dataFor(key); if (!d) return false;
+    var t = typeOf(key);
+    try {
+      if (key === 'spouse') {
+        if (t === 'bar') drawBars(s.ctx, s.w, s.h, d.single.labels, d.single.values, d.single.colors, false);
+        else drawGrouped(s.ctx, s.w, s.h, d.group, ['#7c5cff', '#ff9f45']);
+      } else if (d.series && (t === 'line' || t === 'area')) {
+        drawLine(s.ctx, s.w, s.h, d.series.map(function (x) { return { name: x.name, color: x.color, data: x.data.slice() }; }), d.x, t === 'area');
+      } else if (d.series) {
+        drawBars(s.ctx, s.w, s.h, d.series.map(function (x) { return x.name; }), d.series.map(function (x) { return x.data[x.data.length - 1]; }), d.series.map(function (x) { return x.color; }), false);
+      } else if (t === 'line' || t === 'area') {
+        drawLine(s.ctx, s.w, s.h, [{ name: '', color: Array.isArray(d.colors) ? d.colors[0] : d.colors, data: d.values.slice() }], d.labels, t === 'area');
+      } else {
+        drawBars(s.ctx, s.w, s.h, d.labels, d.values, d.colors, !!d.pct);
+      }
+      if (d.empty) { s.ctx.fillStyle = COL.txt; s.ctx.font = '11px Segoe UI'; s.ctx.textAlign = 'center'; s.ctx.fillText('Run Monte Carlo to populate', s.w / 2, s.h / 2); s.ctx.textAlign = 'left'; }
+      if (legId && d.leg) legend(legId, d.leg);
+    } catch (err) { return false; }
+    return true;
+  }
+  function renderAll() { var p = 0; MAP.forEach(function (m) { if (renderOne(m[0], m[1], m[2])) p++; }); return p; }
+
+  var pending = false;
+  function schedule() { if (pending) return; pending = true; requestAnimationFrame(function () { pending = false; renderAll(); }); }
+  function forceDonutBar() { var ds = document.querySelector('select[data-chart="donut"]'); if (ds && ds.options && ds.options.length !== 1) { ds.innerHTML = '<option value="bar">Bar</option>'; ds.value = 'bar'; } }
+
+  function boot() {
+    forceDonutBar();
+    var n = 0, t = setInterval(function () { n++; if (window.__lastR) { forceDonutBar(); renderAll(); clearInterval(t); } else if (n > 120) clearInterval(t); }, 100);
+    document.addEventListener('change', function (e) { if (e.target && e.target.matches && e.target.matches('select[data-chart]')) setTimeout(schedule, 0); }, true);
+    document.addEventListener('click', function (e) {
+      if (!e.target || !e.target.closest) return;
+      if (e.target.closest('#tabbar button')) setTimeout(function () { forceDonutBar(); schedule(); }, 60);
+      if (e.target.closest('#btnRunMC')) setTimeout(schedule, 80);
+      if (e.target.closest('#presetButtons')) setTimeout(schedule, 40);
+    }, true);
+    var ig = document.getElementById('inputGroups');
+    if (ig) { ig.addEventListener('input', function () { setTimeout(schedule, 0); }); ig.addEventListener('change', function () { setTimeout(schedule, 0); }); }
+    window.addEventListener('resize', function () { schedule(); });
+    window.__ADMIN_RENDER = { renderAll: renderAll, renderOne: renderOne, dataFor: dataFor, forceDonutBar: forceDonutBar };
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  var acc = document.getElementById('discAccept'); if (acc) acc.addEventListener('click', function () { setTimeout(renderAll, 320); });
+})();
+
+</script>
+<script id="ADMIN_PRINT_REPORT">
+/* ============================================================================
+   ADMIN PRINT REPORT — builds a clean 1-page A4 summary of the SELECTED INPUTS
+   (plus key results) and prints it. Exposed as window.__buildPrintReport.
+   ============================================================================ */
+(function () {
+  'use strict';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+
+  function collectInputs() {
+    var groups = [];
+    var dets = document.querySelectorAll('#inputGroups details.group');
+    dets.forEach(function (det) {
+      var sum = det.querySelector('summary');
+      var title = sum ? (sum.textContent || '').replace(/\u25b6|\u25bc/g, '').trim() : 'Inputs';
+      var items = [];
+      det.querySelectorAll('.field').forEach(function (f) {
+        var labEl = f.querySelector('label span'); if (!labEl) return;
+        var label = (labEl.textContent || '').trim();
+        var key = f.getAttribute('data-fk');
+        var val = '';
+        var inp = f.querySelector('#in_' + key) || f.querySelector('input,select');
+        if (!inp) return;
+        var tag = (inp.tagName || '').toUpperCase();
+        if (inp.type === 'checkbox') val = inp.checked ? 'Yes' : 'No';
+        else if (tag === 'SELECT') { var op = inp.options[inp.selectedIndex]; val = op ? op.textContent : inp.value; }
+        else {
+          var numEl = f.querySelector('#inN_' + key);
+          val = (numEl ? numEl.value : inp.value);
+        }
+        items.push({ label: label, value: val });
+      });
+      if (items.length) groups.push({ title: title, items: items });
+    });
+    return groups;
+  }
+
+  function collectKPIs() {
+    var out = [];
+    document.querySelectorAll('#kpiGrid .kpi').forEach(function (k) {
+      var l = k.querySelector('.k-label'), v = k.querySelector('.k-val'), s = k.querySelector('.k-sub');
+      if (l && v) out.push({ label: (l.textContent || '').trim(), value: (v.textContent || '').trim(), sub: s ? (s.textContent || '').trim() : '' });
+    });
+    return out;
+  }
+
+  function statusText() {
+    var b = document.getElementById('statusText');
+    return b ? (b.textContent || '').trim() : '';
+  }
+
+  function build() {
+    var host = document.getElementById('printReport');
+    if (!host) { host = document.createElement('div'); host.id = 'printReport'; document.body.appendChild(host); }
+    var groups = collectInputs();
+    var kpis = collectKPIs();
+    var now = new Date();
+    var dateStr = now.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) + ' ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+    var html = '';
+    html += '<div class="pr-head">';
+    html += '<div class="pr-title">WealthHorizon — Retirement &amp; Pension Plan Summary</div>';
+    html += '<div class="pr-meta">Generated: ' + esc(dateStr) + '</div>';
+    html += '</div>';
+    if (statusText()) html += '<div class="pr-status">' + esc(statusText()) + '</div>';
+
+    // Key results (compact)
+    if (kpis.length) {
+      html += '<div class="pr-sec">Key results</div><div class="pr-kpis">';
+      kpis.forEach(function (k) {
+        html += '<div class="pr-kpi"><span class="l">' + esc(k.label) + '</span><span class="v">' + esc(k.value) + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    // Selected inputs, grouped
+    html += '<div class="pr-sec">Selected inputs</div><div class="pr-groups">';
+    groups.forEach(function (g) {
+      html += '<div class="pr-group"><div class="pr-gtitle">' + esc(g.title) + '</div><table class="pr-tbl">';
+      g.items.forEach(function (it) {
+        html += '<tr><td class="k">' + esc(it.label) + '</td><td class="v">' + esc(it.value) + '</td></tr>';
+      });
+      html += '</table></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="pr-foot">Educational planning simulator — not personalised or regulated investment advice. Figures are projections based on the assumptions above and are not guaranteed.</div>';
+
+    host.innerHTML = html;
+    return host;
+  }
+
+  function printNow() { build(); setTimeout(function () { window.print(); }, 60); }
+
+  window.__buildPrintReport = build;
+  window.__printReport = printNow;
+
+  function wire() {
+    var btn = document.getElementById('btnPrintReport');
+    if (btn && !btn.__wired) { btn.__wired = true; btn.addEventListener('click', printNow); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
+  var acc = document.getElementById('discAccept'); if (acc) acc.addEventListener('click', function () { setTimeout(wire, 300); });
+  // also try after a tick in case toolbar builds late
+  setTimeout(wire, 500);
+})();
+
+</script>
+<script id="CLIENT_PROTECTION">
+(function(){
+  'use strict';
+  function editable(t){ if(!t)return false; var tag=(t.tagName||'').toUpperCase(); return tag==='INPUT'||tag==='TEXTAREA'||t.isContentEditable; }
+  function shield(on,msg){ var s=document.getElementById('shield'); if(!s)return; if(on){ s.classList.add('on'); var m=document.getElementById('shieldMsg'); if(m&&msg)m.textContent=msg; } else s.classList.remove('on'); }
+  // block right-click
+  document.addEventListener('contextmenu',function(e){ e.preventDefault(); return false; }, {capture:true});
+  // block drag of images/canvas
+  document.addEventListener('dragstart',function(e){ e.preventDefault(); return false; }, {capture:true});
+  // block copy/cut unless inside an input the user is editing
+  document.addEventListener('copy',function(e){ if(!editable(e.target)) e.preventDefault(); }, {capture:true});
+  document.addEventListener('cut',function(e){ if(!editable(e.target)) e.preventDefault(); }, {capture:true});
+  // block devtools / view-source / save shortcuts. Allow Ctrl+P ONLY for the report (handled by button->window.print of report).
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toUpperCase();
+    if(e.key==='F12'){ e.preventDefault(); return false; }
+    if(e.ctrlKey&&e.shiftKey&&(k==='I'||k==='J'||k==='C')){ e.preventDefault(); return false; }
+    if(e.ctrlKey&&(k==='U'||k==='S')){ e.preventDefault(); return false; }
+    if(e.metaKey&&e.altKey&&(k==='I'||k==='J'||k==='C')){ e.preventDefault(); return false; }
+    if(e.key==='PrintScreen'){ shield(true,'Screenshots are disabled for this document.'); try{ navigator.clipboard&&navigator.clipboard.writeText(''); }catch(_){}
+      setTimeout(function(){ if(!document.hidden && (!document.hasFocus||document.hasFocus())) shield(false); }, 1200); }
+  }, {capture:true});
+  // hide content when window loses focus / hidden (screenshot & screen-record deterrent)
+  window.addEventListener('blur', function(){ shield(true,'Content hidden while the window is not focused.'); });
+  window.addEventListener('focus', function(){ shield(false); });
+  document.addEventListener('visibilitychange', function(){ document.hidden ? shield(true,'Content hidden while the tab is not active.') : shield(false); });
+  // devtools-open heuristic -> blur app
+  setInterval(function(){
+    var dw=window.outerWidth-window.innerWidth, dh=window.outerHeight-window.innerHeight;
+    if(dw>170||dh>170) document.body.classList.add('devtools-warn'); else document.body.classList.remove('devtools-warn');
+  }, 1200);
+})();
+</script>
+</body>
+</html>
